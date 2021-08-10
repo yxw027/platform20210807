@@ -49,5 +49,10 @@ namespace MODEL
         /// 备注
         /// </summary>
         public string BZ { get; set; }
+
+        /// <summary>
+        /// 边界范围
+        /// </summary>
+        public string RegionlBoundary { get; set; }
     }
 }
