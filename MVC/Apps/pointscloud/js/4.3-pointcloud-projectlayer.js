@@ -8,7 +8,7 @@ layer.open({
     , closeBtn: 0
     , maxmin: true
     , moveOut: true
-    , content:'<!--工具栏--><div class="layui-row" style="position:absolute;top:5px;width:100%">    <!--搜索-->    <div class="layui-col-md6" style="width:70%">        <div class="grid-demo grid-demo-bg1">            <input type="text" id="projectfilter" lay-verify="title" autocomplete="off" placeholder="搜索" class="layui-input" style="left:30px;height:30px;padding-left:35px;border-radius:5px">        </div>    </div>    <!--创建项目-->    <div class="layui-col-md2" style="width:10%">        <div class="grid-demo">            <button id="projectadd" type="button" class="layui-btn layui-btn-primary layui-btn-sm" style="border-style:hidden;float:right"><i class="layui-icon layui-icon-add-circle" style="margin-right:0px"></i></button>        </div>    </div>    <!--选择文件-->    <div class="layui-col-md2" style="width:10%">        <div class="grid-demo">            <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" id="selectpcdata" style="border-style:hidden;float:right"><i class="layui-icon layui-icon-file-b" style="margin-right:0px"></i></button>        </div>    </div>    <!--文件上传-->    <div class="layui-col-md2" style="width:10%">        <div class="grid-demo">            <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" id="startupload" style="border-style:hidden;float:right"><i class="layui-icon layui-icon-upload-circle" style="margin-right:0px"></i></button>        </div>    </div></div><!--项目列表--><div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief"     style="margin-top:30px">    <!--选项卡-->    <ul class="layui-tab-title">        <li class="layui-this" style="width:90%;padding-top: 3px;">            项目        </li>    </ul>    <!--tree-->    <div class="layui-tab-content">        <div class="layui-tab-item layui-show" id="projectbyname"></div>        <div class="layui-tab-item" id="projectbytime"></div>    </div></div>'
+    , content: '<!--工具栏--><div class="layui-row" style="position:absolute;top:5px;width:100%">    <!--搜索-->    <div class="layui-col-md6" style="width:70%">        <div class="grid-demo grid-demo-bg1">            <input type="text" id="projectfilter" lay-verify="title" autocomplete="off" placeholder="搜索" class="layui-input" style="left:30px;height:30px;padding-left:35px;border-radius:5px">        </div>    </div>    <!--创建项目-->    <div class="layui-col-md2" style="width:10%">        <div class="grid-demo">            <button id="projectadd" type="button" class="layui-btn layui-btn-primary layui-btn-sm" style="border-style:hidden;float:right"><i class="layui-icon layui-icon-add-circle" style="margin-right:0px"></i></button>        </div>    </div>    <!--选择文件-->    <div class="layui-col-md2" style="width:10%">        <div class="grid-demo">            <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" id="selectpcdata" style="border-style:hidden;float:right"><i class="layui-icon layui-icon-file-b" style="margin-right:0px"></i></button>        </div>    </div>    <!--文件上传-->    <div class="layui-col-md2" style="width:10%">        <div class="grid-demo">            <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" id="startupload" style="border-style:hidden;float:right"><i class="layui-icon layui-icon-upload-circle" style="margin-right:0px"></i></button>        </div>    </div></div><!--项目列表--><div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief"     style="margin-top:30px">    <!--选项卡-->    <ul class="layui-tab-title">        <li class="layui-this" style="width:90%;padding-top: 3px;">            项目        </li>    </ul>    <!--tree-->    <div class="layui-tab-content">        <div class="layui-tab-item layui-show" id="projectbyname"></div>        <div class="layui-tab-item" id="projectbytime"></div>    </div></div>'
     , zIndex: layer.zIndex
     , success: function (layero) {
         layer.setTop(layero);
@@ -43,7 +43,7 @@ function PointCloudProjectList() {
                         project.type = 'project';
                         project.id = layerlist.PCloudProjectList[i].Id;
                         var projectchild = [];
-                            //项目区域
+                        //项目区域
                         for (var j in layerlist.PCloudProjectList[i].RegionList) {
                             if (layerlist.PCloudProjectList[i].RegionList[j] != null) {
                                 var regionchild = [];
@@ -54,7 +54,7 @@ function PointCloudProjectList() {
                                 for (var n in layerlist.PCloudProjectList[i].RegionList[j].PCloudDataList) {
                                     if (layerlist.PCloudProjectList[i].RegionList[j].PCloudDataList[n] != null) {
                                         var pcdata = new Object;
-                                        pcdata.title = layerlist.PCloudProjectList[i].RegionList[j].PCloudDataList[n].CJSJ.substring(0, 4) + "-"+layerlist.PCloudProjectList[i].RegionList[j].PCloudDataList[n].Id;
+                                        pcdata.title = layerlist.PCloudProjectList[i].RegionList[j].PCloudDataList[n].CJSJ.substring(0, 4) + "-" + layerlist.PCloudProjectList[i].RegionList[j].PCloudDataList[n].Id;
                                         pcdata.id = layerlist.PCloudProjectList[i].RegionList[j].PCloudDataList[n].Id;
                                         pcdata.type = 'pcdata';
                                         pcdata.checked = false;
@@ -107,14 +107,14 @@ function PointCloudProjectList() {
                     , showLine: true
                     , isImageTree: true
                     , data: layers
-                    , edit: ['add', 'update','del']
+                    , edit: ['add', 'update', 'del']
                     , accordion: true
                     , click: function (obj) {
                         PointCloudProjectNodeClick(obj);
-                    }       
+                    }
                     , operate: function (obj) {
                         PointCloudProjectNodeOperate(obj);
-                    }    
+                    }
                     , oncheck: function (obj) {
                         PointCloudProjectNodeCheck(obj);
                     }
@@ -133,9 +133,8 @@ function PointCloudProjectNodeClick(obj) {
                 document.getElementById("currentproject").style.visibility = "visible";
                 document.getElementById("currentproject").innerHTML = "<option>" + JSON.stringify(obj.data.title).replace(/\"/g, "") + "</option><option>清除当前项目</option>";
 
-                //TODO请求项目相关信息（图层、监测点）
-               // GetProjectMonitor(currentprojectid);
-
+                //加载项目区域边界
+                LoadRegionalBoundary(currentprojectid);
 
                 //监听清除当前项目操作
                 $(() => {
@@ -158,7 +157,11 @@ function PointCloudProjectNodeClick(obj) {
         });
     }
 
-   
+    else if (obj.data.type === 'region') {
+        viewer.zoomTo(viewer.entities.getById("region_" + obj.data.id), new Cesium.HeadingPitchRange(Cesium.Math.toRadians(0), Cesium.Math.toRadians(-90), 20));
+    }
+
+
 }
 //节点操作(查看、编辑、删除)
 function PointCloudProjectNodeOperate(obj) {
@@ -183,14 +186,15 @@ function PointCloudProjectNodeOperate(obj) {
             }
         }
     }
-//编辑
+    //编辑
     else if (obj.type === 'update') {
 
         if (obj.data.type === 'project') {
 
         }
         if (obj.data.type === 'region') {
-
+            //获取区域
+            RegionlBoundary(obj.data.id);
         }
         if (obj.data.type === 'pcdata') {
             if ((projectinfoaddlayerindex == null) && (projectinfoviewlayerindex == null)) {
@@ -244,7 +248,7 @@ function AddProject() {
             , closeBtn: 1
             , maxmin: true
             , moveOut: true
-            , content:'<!--创建点云项目--><form class="layui-form" style="margin-top:5px;margin-right:5px;" lay-filter="addpointcloud_projectform">    <div class="layui-form-item">        <label class="layui-form-label">项目名称</label>        <div class="layui-input-block">            <input type="text" name="xmmc" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />        </div>    </div>    <div class="layui-form-item">        <div class="layui-row">            <div class="layui-col-md6" style="width:50%">                <div class="grid-demo grid-demo-bg1">                    <label class="layui-form-label">中心经度</label>                    <div class="layui-input-block">                        <input type="text" name="zxjd" lay-verify="required|number" autocomplete="off" placeholder="请输入" class="layui-input" />                    </div>                </div>            </div>            <div class="layui-col-md6" style="width:50%">                <div class="grid-demo">                    <label class="layui-form-label">中心纬度</label>                    <div class="layui-input-block">                        <input type="text" name="zxwd" lay-verify="required|number" autocomplete="off" placeholder="请输入" class="layui-input" />                    </div>                </div>            </div>        </div>    </div>    <div class="layui-form-item">        <label class="layui-form-label">行政区划</label>        <div class="layui-input-inline" style="width:200px;">            <select id="provinceid" name="province" lay-verify="required">                <option value="">省/市</option>                <option value="0">重庆市</option>            </select>        </div>        <div class="layui-input-inline" style="width:200px;">            <select id="cityid" name="city" lay-verify="required">                <option value="">市辖区/县</option>                <option value="0">市辖区</option>                <option value="1">县</option>            </select>        </div>        <div class="layui-input-inline" style="width:200px;">            <select id="districtid" name="district" lay-verify="required">                <option value="">区/县</option>            </select>        </div>    </div>    <div class="layui-form-item">        <label class="layui-form-label">项目位置</label>        <div class="layui-input-block">            <input type="text" name="xmwz" autocomplete="off" placeholder="请输入" class="layui-input" />        </div>    </div>    <div class="layui-form-item">        <div class="layui-row">            <div class="layui-col-md6" style="width:50%">                <div class="grid-demo grid-demo-bg1">                    <div class="layui-inline">                        <label class="layui-form-label">创建时间</label>                        <div class="layui-input-inline" style="width:250px;">                            <input type="text" id="xmkssjid" name="xmkssj" lay-verify="date" placeholder="YYYY-MM-DD" autocomplete="off" class="layui-input" />                        </div>                    </div>                </div>            </div>            <div class="layui-col-md6" style="width:50%">                <div class="grid-demo grid-demo-bg1">                    <label class="layui-form-label">坐标系统</label>                    <div class="layui-input-block">                        <select id="kjckid" name="kjck" lay-verify="required">                            <option value="">请选择</option>                        </select>                    </div>                </div>            </div>        </div>    </div>    <div class="layui-form-item">        <div class="layui-row">            <div class="layui-col-md6" style="width:50%">                <div class="grid-demo grid-demo-bg1">                    <label class="layui-form-label">是否有三维模型</label>                    <div class="layui-input-block">                        <select id="swmxid" name="swmx" lay-verify="required">                            <option value="1">是</option>                            <option value="0">否</option>                        </select>                    </div>                </div>            </div>            <div class="layui-col-md6" style="width:50%">                <div class="grid-demo grid-demo-bg1">                    <label class="layui-form-label">是否结束</label>                    <div class="layui-input-block">                        <select id="sfjsid" name="sfjs" lay-verify="required">                            <option value="1">是</option>                            <option value="0">否</option>                        </select>                    </div>                </div>            </div>        </div>    </div>    <div class="layui-form-item">        <label class="layui-form-label">备注</label>        <div class="layui-input-block">            <input type="text" name="bz" autocomplete="off" placeholder="请输入" class="layui-input" />        </div>    </div>    <div class="layui-form-item" style="margin-top:5px">        <div style="position:absolute;right:15px;">            <button type="reset" class="layui-btn layui-btn-primary" style="width:100px">重置</button>            <button type="submit" class="layui-btn" lay-submit="" lay-filter="addprojectinfosubmit" style="width:100px">提交</button>        </div>    </div></form>'
+            , content: '<!--创建点云项目--><form class="layui-form" style="margin-top:5px;margin-right:5px;" lay-filter="addpointcloud_projectform">    <div class="layui-form-item">        <label class="layui-form-label">项目名称</label>        <div class="layui-input-block">            <input type="text" name="xmmc" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />        </div>    </div>    <div class="layui-form-item">        <div class="layui-row">            <div class="layui-col-md6" style="width:50%">                <div class="grid-demo grid-demo-bg1">                    <label class="layui-form-label">中心经度</label>                    <div class="layui-input-block">                        <input type="text" name="zxjd" lay-verify="required|number" autocomplete="off" placeholder="请输入" class="layui-input" />                    </div>                </div>            </div>            <div class="layui-col-md6" style="width:50%">                <div class="grid-demo">                    <label class="layui-form-label">中心纬度</label>                    <div class="layui-input-block">                        <input type="text" name="zxwd" lay-verify="required|number" autocomplete="off" placeholder="请输入" class="layui-input" />                    </div>                </div>            </div>        </div>    </div>    <div class="layui-form-item">        <label class="layui-form-label">行政区划</label>        <div class="layui-input-inline" style="width:200px;">            <select id="provinceid" name="province" lay-verify="required">                <option value="">省/市</option>                <option value="0">重庆市</option>            </select>        </div>        <div class="layui-input-inline" style="width:200px;">            <select id="cityid" name="city" lay-verify="required">                <option value="">市辖区/县</option>                <option value="0">市辖区</option>                <option value="1">县</option>            </select>        </div>        <div class="layui-input-inline" style="width:200px;">            <select id="districtid" name="district" lay-verify="required">                <option value="">区/县</option>            </select>        </div>    </div>    <div class="layui-form-item">        <label class="layui-form-label">项目位置</label>        <div class="layui-input-block">            <input type="text" name="xmwz" autocomplete="off" placeholder="请输入" class="layui-input" />        </div>    </div>    <div class="layui-form-item">        <div class="layui-row">            <div class="layui-col-md6" style="width:50%">                <div class="grid-demo grid-demo-bg1">                    <div class="layui-inline">                        <label class="layui-form-label">创建时间</label>                        <div class="layui-input-inline" style="width:250px;">                            <input type="text" id="xmkssjid" name="xmkssj" lay-verify="date" placeholder="YYYY-MM-DD" autocomplete="off" class="layui-input" />                        </div>                    </div>                </div>            </div>            <div class="layui-col-md6" style="width:50%">                <div class="grid-demo grid-demo-bg1">                    <label class="layui-form-label">坐标系统</label>                    <div class="layui-input-block">                        <select id="kjckid" name="kjck" lay-verify="required">                            <option value="">请选择</option>                        </select>                    </div>                </div>            </div>        </div>    </div>    <div class="layui-form-item">        <div class="layui-row">            <div class="layui-col-md6" style="width:50%">                <div class="grid-demo grid-demo-bg1">                    <label class="layui-form-label">是否有三维模型</label>                    <div class="layui-input-block">                        <select id="swmxid" name="swmx" lay-verify="required">                            <option value="1">是</option>                            <option value="0">否</option>                        </select>                    </div>                </div>            </div>            <div class="layui-col-md6" style="width:50%">                <div class="grid-demo grid-demo-bg1">                    <label class="layui-form-label">是否结束</label>                    <div class="layui-input-block">                        <select id="sfjsid" name="sfjs" lay-verify="required">                            <option value="1">是</option>                            <option value="0">否</option>                        </select>                    </div>                </div>            </div>        </div>    </div>    <div class="layui-form-item">        <label class="layui-form-label">备注</label>        <div class="layui-input-block">            <input type="text" name="bz" autocomplete="off" placeholder="请输入" class="layui-input" />        </div>    </div>    <div class="layui-form-item" style="margin-top:5px">        <div style="position:absolute;right:15px;">            <button type="reset" class="layui-btn layui-btn-primary" style="width:100px">重置</button>            <button type="submit" class="layui-btn" lay-submit="" lay-filter="addprojectinfosubmit" style="width:100px">提交</button>        </div>    </div></form>'
             , zIndex: layer.zIndex
             , success: function (layero) {
                 layer.setTop(layero);
@@ -255,7 +259,7 @@ function AddProject() {
                 if (srids.length > 0) {
                     for (var i in srids) {
                         //if (srids[i].name == "China Geodetic Coordinate System 2000") {
-                            document.getElementById("kjckid").innerHTML += '<option value="' + srids[i].value + '" selected>' + srids[i].name + '</option>';
+                        document.getElementById("kjckid").innerHTML += '<option value="' + srids[i].value + '" selected>' + srids[i].name + '</option>';
                         //}
                     }
                 }
@@ -274,7 +278,7 @@ function AddProject() {
                         url: servicesurl + "/api/PointCloudProject/AddProject", type: "post", data: data.field,
                         success: function (result) {
 
-                            if (isNaN(parseInt(JSON.parse(result).code)==0)) {
+                            if (isNaN(parseInt(JSON.parse(result).code) == 0)) {
                                 //创建失败
                                 layer.msg(result, { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
                             }
@@ -297,7 +301,7 @@ function AddProject() {
                 projectinfoaddlayerindex = null;
             }
         });
-    }    
+    }
 }
 
 //创建项目区域
@@ -371,7 +375,291 @@ function AddRegion() {
             });
         }
     }
- 
+
+}
+var handler;
+
+//边界区域范围
+function RegionlBoundary(regionid) {
+
+    var RegionalBoundary = [];
+    var eyespoints = [];
+    handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+    if (curtileset != null) {
+        handler.setInputAction(function (leftclick) {
+            var position = viewer.scene.pick(leftclick.position);
+            if (position) {
+                var pickedCar3 = getCartesian3fromPick(viewer, leftclick);
+                var cartesian3 = Cesium.Cartographic.fromCartesian(pickedCar3);                        //笛卡尔XYZ
+                var longitude = Cesium.Math.toDegrees(cartesian3.longitude);                         //经度
+                var latitude = Cesium.Math.toDegrees(cartesian3.latitude);                           //纬度
+                var height = cartesian3.height;                                                      //高度
+                if (height > 0) {
+                    if (Cesium.defined(position)) {
+                        viewer.entities.add({
+                            id: "ptstemp" + NewGuid(),
+                            name: "ptstemp" + NewGuid(),
+                            position: pickedCar3,
+                            point: {
+                                pixelSize: 5,
+                                color: Cesium.Color.YELLOW
+                            }
+                        });
+
+                        RegionalBoundary.push(pickedCar3);
+                        eyespoints.push(new Cesium.Cartesian3(viewer.camera.position.x, viewer.camera.position.y, viewer.camera.position.z));
+
+
+                    }
+                }
+            }
+
+        }, this.Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        if (isMobile.any()) {
+            handler.setInputAction(function (pinch) {
+
+            }, Cesium.ScreenSpaceEventType.PINCH_START);
+        }
+        else {
+            //右击
+            handler.setInputAction(function (rightclik) {
+                if (RegionalBoundary.length > 2) {
+                    viewer.entities.add({
+                        name: "ptstemp" + NewGuid(),
+                        polygon: {
+                            hierarchy: {
+                                positions: RegionalBoundary
+                            },
+                            material: Cesium.Color.YELLOW.withAlpha(0.5),
+                            classificationType: Cesium.ClassificationType.CESIUM_3D_TILE,
+                        }
+                    });
+
+                    regionlboundarylayerindex = layer.open({
+                        type: 1
+                        , title: ['选定范围', 'font-weight:bold;font-size:large;font-family:	Microsoft YaHei']
+                        , area: ['250px', '160px']
+                        , shade: 0
+                        , offset: 'auto'
+                        , closeBtn: 1
+                        , maxmin: true
+                        , moveOut: true
+                        , content: '<form class="layui-form" style="margin-top:5px;margin-right:25px;" lay-filter="addregionlboundaryform"><div class="layui-form-item" style="margin-top:30px"><div style="position:absolute;right:5px;"><button id="cancel_rbadd" type="button"class="layui-btn layui-btn-primary" style="width:100px">取消</button><button type="submit" class="layui-btn" lay-submit="" lay-filter="addpointinfosubmit" style="width:100px">确定</button></div></div></form>'
+                        , zIndex: layer.zIndex
+                        , success: function (layero) {
+                            //置顶
+                            layer.setTop(layero);
+                            form.render();
+                            //上传数据
+                            $("#cancel_rbadd").on("click", function () {
+                                //取消画的图和点
+                                if (handler != undefined) {
+                                    handler.destroy();
+                                    cleartemp();
+                                    RegionalBoundary = [];
+
+                                    layer.close(regionlboundarylayerindex);
+                                    regionlboundarylayerindex = null;
+                                }
+                            });
+
+                            form.on('submit(addpointinfosubmit)', function (data) {
+
+                                data.field.cookie = document.cookie;
+                                data.field.regionalboundary = JSON.stringify(RegionalBoundary);
+                                data.field.projectId = currentprojectid;
+                                data.field.regionid = regionid;
+
+                                // var loadingminindex = layer.load(0, { shade: 0.3, zIndex: layer.zIndex, success: function (loadlayero) { layer.setTop(loadlayero); } });
+                                $.ajax({
+                                    url: servicesurl + "/api/PointCloudRegion/UpdateRegionlBoundaryInfo", type: "put", data: data.field,
+                                    success: function (result) {
+                                        layer.msg(result, { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+                                        //刷新项目列表
+                                        //PointCloudProjectList();
+
+                                        var sendDate = {};
+
+                                        var maxX = viewer.scene.cartesianToCanvasCoordinates(RegionalBoundary[0]).x;
+                                        var minX = viewer.scene.cartesianToCanvasCoordinates(RegionalBoundary[0]).x;
+                                        var maxY = viewer.scene.cartesianToCanvasCoordinates(RegionalBoundary[0]).y;
+                                        var minY = viewer.scene.cartesianToCanvasCoordinates(RegionalBoundary[0]).y;
+                                        for (var i in RegionalBoundary) {
+                                            if (viewer.scene.cartesianToCanvasCoordinates(RegionalBoundary[i]).x > maxX) {
+                                                maxX = viewer.scene.cartesianToCanvasCoordinates(RegionalBoundary[i]).x;
+                                            }
+                                            if (viewer.scene.cartesianToCanvasCoordinates(RegionalBoundary[i]).x < minX) {
+                                                minX = viewer.scene.cartesianToCanvasCoordinates(RegionalBoundary[i]).x;
+                                            }
+                                            if (viewer.scene.cartesianToCanvasCoordinates(RegionalBoundary[i]).y > maxY) {
+                                                maxY = viewer.scene.cartesianToCanvasCoordinates(RegionalBoundary[i]).y;
+                                            }
+                                            if (viewer.scene.cartesianToCanvasCoordinates(RegionalBoundary[i]).y < minY) {
+                                                minY = viewer.scene.cartesianToCanvasCoordinates(RegionalBoundary[i]).y;
+                                            }
+                                        }
+                                        // 最大100个点
+                                        var xxishu = (maxX - minX) / 10;
+                                        var yxishu = (maxY - minY) / 10;
+                                        var jimiList = [];
+                                        for (var x = 0; x < 11; x++) {
+                                            for (var m = 0; m < 11; m++) {
+
+                                                var temp = new Cesium.Cartesian2(minX + xxishu * x, minY + yxishu * m);//b点，加了5.
+
+                                                jimiList.push(viewer.scene.pickPosition(temp));
+                                            }
+                                        }
+
+                                        sendDate.bpsList = JSON.stringify(RegionalBoundary);
+                                        sendDate.eyesList = JSON.stringify(eyespoints);
+                                        sendDate.spsList = JSON.stringify(jimiList);
+                                        sendDate.cookie = document.cookie;
+                                        console.log(sendDate);
+
+                                        var loadingceindex = layer.load(0, { shade: 0.2, zIndex: layer.zIndex, success: function (loadlayero) { layer.setTop(loadlayero); } });
+
+                                        $.ajax({
+                                            url: servicesurl + "/api/FlzWindowInfo/getWindowInfo", type: "post", data: sendDate,//后台发送请求
+                                            success: function (result) {
+                                                layer.close(loadingceindex);
+
+                                                var windowInfos = JSON.parse(result);
+                                                console.log(windowInfos);
+                                                if (windowInfos == null) {
+                                                    layer.close(drowinfoAddlayerindex);
+                                                    layer.msg("调用接口计算失败，请重新选择位置，所选的点不能形成平面", { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+                                                    ClearTemp();
+
+                                                    if (handler != undefined) {
+                                                        handler.destroy();
+                                                    }
+                                                    RegionalBoundary = [];
+                                                    eyespoints = [];
+                                                    return false;
+                                                }
+                                                if (windowInfos == "") {
+                                                    layer.msg("调用接口结算失败，请稍后再试", { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+                                                    ClearTemp();
+
+                                                    if (handler != undefined) {
+                                                        handler.destroy();
+                                                    }
+                                                    RegionalBoundary = [];
+                                                    eyespoints = [];
+                                                    return false;
+
+                                                }
+                                                else {
+
+                                                    var BLHList = windowInfos.Vertices3D1;
+                                                    var positList = [];
+                                                    var maxHeihts = 0;
+                                                    for (var i in BLHList) {
+                                                        if (BLHList[i].L == "NaN") {
+                                                            layer.msg("请旋转模型到合适位置", { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+                                                            return false;
+                                                        }
+                                                        var postions = new Cesium.Cartographic(Math.PI / 180 * BLHList[i].L, Math.PI / 180 * BLHList[i].B);
+                                                        var Heights = viewer.scene.sampleHeight(postions);
+                                                        if (Heights > maxHeihts) {
+                                                            maxHeihts = Heights;
+                                                        }
+                                                        //经纬度，现在的坐标，转换三维。
+                                                        positList.push(new Cesium.Cartesian3.fromDegrees(BLHList[i].L, BLHList[i].B, Heights));
+                                                    }
+                                                    var polygoninfo = {};
+                                                    polygoninfo.cookie = document.cookie;
+                                                    polygoninfo.points = JSON.stringify(positList);//直接存吧
+                                                    polygoninfo.regionId = regionid;
+                                                    polygoninfo.type = 1;
+                                                    polygoninfo.projectId = currentprojectid;
+
+                                                    polygoninfo.axisx = JSON.stringify(windowInfos.AxisX);//x轴
+                                                    polygoninfo.axisy = JSON.stringify(windowInfos.AxisY);//y轴   Normal Origin Vertices2D Vertices3D Vertices3D1
+                                                    polygoninfo.normal = JSON.stringify(windowInfos.Normal);//法向量
+                                                    polygoninfo.origin = JSON.stringify(windowInfos.Origin);//原点
+                                                    polygoninfo.vertices2d = JSON.stringify(windowInfos.Vertices2D);//平，面
+                                                    polygoninfo.vertices3d = JSON.stringify(windowInfos.Vertices3D);//空间执教
+                                                    polygoninfo.vertices3dlbh = JSON.stringify(windowInfos.Vertices3D1);//大地坐标
+
+                                                    var tempList = [];
+                                                    tempList.push(positList[0]);
+                                                    tempList.push(positList[1]);
+                                                    tempList.push(positList[2]);
+                                                    var chanzhuang = getChanzhuang(positList);
+                                                    var qingXiang = parseFloat(chanzhuang.qingXiang) - 180;
+                                                    var qingJiao = parseFloat(chanzhuang.qingJiao) - 90;
+                                                    polygoninfo.level = qingXiang.toFixed(2);
+                                                    polygoninfo.vertical = qingJiao.toFixed(2);
+                                                    polygoninfo.height = maxHeihts.toFixed(2);
+
+                                                    //更新多边形信息表
+                                                    $.ajax({
+
+                                                        url: servicesurl + "/api/PointCloudPolygon/EditPolygon", type: "post", data: polygoninfo,
+                                                        success: function (result) {
+                                                            if (isNaN(parseInt(JSON.parse(result).code) == 0)) {
+                                                                //创建失败
+                                                                layer.msg(result, { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+                                                            }
+                                                            else {
+                                                                PointCloudProjectList();
+                                                                cleartemp();
+                                                                var regiontemp = viewer.entities.getById("region_" + regionid)
+                                                                viewer.entities.remove(regiontemp);
+                                                                viewer.entities.add({
+                                                                    id: "region_" + regionid,
+                                                                    name: "region_" + regionid,
+                                                                    polygon: {
+                                                                        hierarchy: {
+                                                                            positions: RegionalBoundary
+                                                                        },
+                                                                        material: Cesium.Color.PALETURQUOISE.withAlpha(0.5),
+                                                                        classificationType: Cesium.ClassificationType.CESIUM_3D_TILE,
+                                                                    }
+                                                                });
+
+                                                            }
+
+                                                        }, datatype: "json"
+                                                    });
+                                                }
+
+                                            }, datatype: "json"
+
+                                        });
+
+                                    }, datatype: "json"
+                                });
+                                layer.close(regionlboundarylayerindex);
+                                regionlboundarylayerindex = null;
+                                return false;
+                            });
+
+                        }
+                        , end: function () {
+                            regionlboundarylayerindex = null;
+
+
+
+                        }, cancel: function () {//取消按钮
+
+                            //取消画的图和点
+                            if (handler != undefined) {
+                                handler.destroy();
+                                cleartemp();
+                                RegionalBoundary = [];
+                            }
+
+                        }
+                    });
+                }
+            }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+
+        }
+
+    }
 }
 
 //点云时序数据信息
@@ -389,7 +677,7 @@ function PCloudDataInfo(id, style) {
                 , anim: 0
                 , maxmin: true
                 , moveOut: true
-                , content:'<!--查看项目--><div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="margin:0px 0px">    <ul class="layui-tab-title">        <li class="layui-this">基本信息</li>        <li>工程设置</li>    </ul>    <div class="layui-tab-content" style="margin:0px 0px">        <!--基本信息-->        <div class="layui-tab-item layui-show">            <form class="layui-form" style="margin-top:0px" lay-filter="projectinfoviewform">                <div class="layui-form-item" >                    <label class="layui-form-label" style="margin-top:10px">所属项目</label>                    <div class="layui-input-block">                        <input type="text" name="xmmc" class="layui-input" readonly="readonly" />                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md4">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">采集人员</label>                                <div class="layui-input-block">                                    <input type="text" name="cjry" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo">                                <label class="layui-form-label">采集时间</label>                                <div class="layui-input-block">                                    <input type="text" name="cjsj" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">项目区域</label>                                <div class="layui-input-block">                                    <input type="text" name="xmqy" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">中心经度</label>                                <div class="layui-input-block">                                    <input type="text" name="zxjd" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">中心纬度</label>                                <div class="layui-input-block">                                    <input type="text" name="zxwd" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md8">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">坐标系统</label>                                <div class="layui-input-block">                                    <input type="text" name="kjck" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo">                                <label class="layui-form-label">数据格式</label>                                <div class="layui-input-block">                                    <input type="text" name="sjgs" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md4">                            <div class="grid-demo">                                <label class="layui-form-label">采集设备</label>                                <div class="layui-input-block">                                    <input type="text" name="cjsb" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">数据类型</label>                                <div class="layui-input-block">                                    <input type="text" name="sjlx" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">点云数目</label>                                <div class="layui-input-block">                                    <input type="text" name="dysm" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row" >                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">目前流程</label>                                <div class="layui-input-block">                                    <input type="text" name="mqlc" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">采集周期</label>                                <div class="layui-input-block">                                    <input type="text" name="cjzq" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <label class="layui-form-label">备注</label>                    <div class="layui-input-block">                        <input type="text" name="bz" class="layui-input" readonly="readonly" />                    </div>                </div>            </form>        </div>        <!--工程设置-->        <div class="layui-tab-item">            <form class="layui-form" style="margin-top:0px" lay-filter="datasetupviewform">                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">                    <legend>统计滤波参数设置</legend>                </fieldset>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">邻近点数</label>                                <div class="layui-input-block">                                    <input type="text" name="meank" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">离群点阈值</label>                                <div class="layui-input-block">                                    <input type="text" name="StddevMulThresh" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <label class="layui-form-label">设置时间</label>                    <div class="layui-input-block">                        <input type="text" name="szsj" class="layui-input" readonly="readonly" />                    </div>                </div>                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">                    <legend>FHFP-ICP配置参数</legend>                </fieldset>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">创建时间</label>                                <div class="layui-input-block">                                    <input type="text" name="cjsj" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">VoexlGri体素大小</label>                                <div class="layui-input-block">                                    <input type="text" name="leafsize" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">最大迭代次数</label>                                <div class="layui-input-block">                                    <input type="text" name="maxIteration" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">计算表面法线/FPFH搜索范围半径</label>                                <div class="layui-input-block">                                    <input type="text" name="radiusSearch" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                    </div>                </div>                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">                    <legend>提取点云边界方式</legend>                </fieldset>                <div class="layui-form-item">                    <label class="layui-form-label">边界方法</label>                    <div class="layui-input-block">                        <input type="text" name="bjff" class="layui-input" readonly="readonly" />                    </div>                </div>            </form>        </div>    </div></div>'
+                , content: '<!--查看项目--><div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="margin:0px 0px">    <ul class="layui-tab-title">        <li class="layui-this">基本信息</li>        <li>工程设置</li>    </ul>    <div class="layui-tab-content" style="margin:0px 0px">        <!--基本信息-->        <div class="layui-tab-item layui-show">            <form class="layui-form" style="margin-top:0px" lay-filter="projectinfoviewform">                <div class="layui-form-item" >                    <label class="layui-form-label" style="margin-top:10px">所属项目</label>                    <div class="layui-input-block">                        <input type="text" name="xmmc" class="layui-input" readonly="readonly" />                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md4">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">采集人员</label>                                <div class="layui-input-block">                                    <input type="text" name="cjry" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo">                                <label class="layui-form-label">采集时间</label>                                <div class="layui-input-block">                                    <input type="text" name="cjsj" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">项目区域</label>                                <div class="layui-input-block">                                    <input type="text" name="xmqy" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">中心经度</label>                                <div class="layui-input-block">                                    <input type="text" name="zxjd" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">中心纬度</label>                                <div class="layui-input-block">                                    <input type="text" name="zxwd" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md8">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">坐标系统</label>                                <div class="layui-input-block">                                    <input type="text" name="kjck" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo">                                <label class="layui-form-label">数据格式</label>                                <div class="layui-input-block">                                    <input type="text" name="sjgs" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md4">                            <div class="grid-demo">                                <label class="layui-form-label">采集设备</label>                                <div class="layui-input-block">                                    <input type="text" name="cjsb" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">数据类型</label>                                <div class="layui-input-block">                                    <input type="text" name="sjlx" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">点云数目</label>                                <div class="layui-input-block">                                    <input type="text" name="dysm" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row" >                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">目前流程</label>                                <div class="layui-input-block">                                    <input type="text" name="mqlc" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">采集周期</label>                                <div class="layui-input-block">                                    <input type="text" name="cjzq" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <label class="layui-form-label">备注</label>                    <div class="layui-input-block">                        <input type="text" name="bz" class="layui-input" readonly="readonly" />                    </div>                </div>            </form>        </div>        <!--工程设置-->        <div class="layui-tab-item">            <form class="layui-form" style="margin-top:0px" lay-filter="datasetupviewform">                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">                    <legend>统计滤波参数设置</legend>                </fieldset>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">邻近点数</label>                                <div class="layui-input-block">                                    <input type="text" name="meank" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">离群点阈值</label>                                <div class="layui-input-block">                                    <input type="text" name="StddevMulThresh" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <label class="layui-form-label">设置时间</label>                    <div class="layui-input-block">                        <input type="text" name="szsj" class="layui-input" readonly="readonly" />                    </div>                </div>                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">                    <legend>FHFP-ICP配置参数</legend>                </fieldset>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">创建时间</label>                                <div class="layui-input-block">                                    <input type="text" name="cjsj" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">VoexlGri体素大小</label>                                <div class="layui-input-block">                                    <input type="text" name="leafsize" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">最大迭代次数</label>                                <div class="layui-input-block">                                    <input type="text" name="maxIteration" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">计算表面法线/FPFH搜索范围半径</label>                                <div class="layui-input-block">                                    <input type="text" name="radiusSearch" class="layui-input" readonly="readonly" />                                </div>                            </div>                        </div>                    </div>                </div>                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">                    <legend>提取点云边界方式</legend>                </fieldset>                <div class="layui-form-item">                    <label class="layui-form-label">边界方法</label>                    <div class="layui-input-block">                        <input type="text" name="bjff" class="layui-input" readonly="readonly" />                    </div>                </div>            </form>        </div>    </div></div>'
                 , zIndex: layer.zIndex
                 , success: function (layero) {
                     layer.setTop(layero);
@@ -421,7 +709,7 @@ function PCloudDataInfo(id, style) {
                         , "sjlx": ""
                         , "dysm": ""
                         , "mqlc": ""
-                        , "cjzq": ""   
+                        , "cjzq": ""
                         , "bz": ""
                     });
                 }
@@ -499,7 +787,7 @@ function PCloudDataInfo(id, style) {
                 , closeBtn: 1
                 , maxmin: true
                 , moveOut: true
-                , content:'<!--编辑项目--><div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="margin:1px 0px">    <ul class="layui-tab-title">        <li class="layui-this">基本信息</li>        <li>工程设置</li>    </ul>    <div class="layui-tab-content" style="margin:0px 0px">        <!--基本信息-->        <div class="layui-tab-item layui-show">            <form class="layui-form" style="margin-top:0px" lay-filter="pointcloudprojectedit">                <div class="layui-form-item">                    <label class="layui-form-label" style="margin-top:10px">所属项目</label>                    <div class="layui-input-block">                        <input type="text" name="xmmc" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md4">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">采集人员</label>                                <div class="layui-input-block">                                    <input type="text" name="cjry" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo">                                <label class="layui-form-label">采集时间</label>                                <div class="layui-input-block">                                    <input type="text" name="cjsj" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">项目区域</label>                                <div class="layui-input-block">                                    <input type="text" name="xmqy" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">中心经度</label>                                <div class="layui-input-block">                                    <input type="text" name="zxjd" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">中心纬度</label>                                <div class="layui-input-block">                                    <input type="text" name="zxwd" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md8">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">坐标系统</label>                                <div class="layui-input-block">                                    <input type="text" name="kjck" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo">                                <label class="layui-form-label">数据格式</label>                                <div class="layui-input-block">                                    <input type="text" name="sjgs" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md4">                            <div class="grid-demo">                                <label class="layui-form-label">采集设备</label>                                <div class="layui-input-block">                                    <input type="text" name="cjsb" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">数据类型</label>                                <div class="layui-input-block">                                    <input type="text" name="sjlx" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">点云数目</label>                                <div class="layui-input-block">                                    <input type="text" name="dysm" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">目前流程</label>                                <div class="layui-input-block">                                    <input type="text" name="mqlc" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">采集周期</label>                                <div class="layui-input-block">                                    <input type="text" name="cjzq" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <label class="layui-form-label">备注</label>                    <div class="layui-input-block">                        <input type="text" name="bz" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                    </div>                </div>                <div class="layui-form-item" style="margin-top:5px">                    <div style="position:absolute;right:5px;">                        <button type="submit" class="layui-btn" lay-submit="" lay-filter="editpointcloudprojectinfosubmit" style="width:120px">保存</button>                    </div>                </div>            </form>        </div>        <!--工程设置-->        <div class="layui-tab-item">            <form class="layui-form" style="margin-top:0px" lay-filter="pointcloudprojectsetedit">                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">                    <legend>统计滤波参数设置</legend>                </fieldset>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">邻近点数</label>                                <div class="layui-input-block">                                    <input type="text" name="meank" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">离群点阈值</label>                                <div class="layui-input-block">                                    <input type="text" name="StddevMulThresh" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <label class="layui-form-label">设置时间</label>                    <div class="layui-input-block">                        <input type="text" name="szsj" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                    </div>                </div>                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">                    <legend>FHFP-ICP配置参数</legend>                </fieldset>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">创建时间</label>                                <div class="layui-input-block">                                    <input type="text" name="cjsj" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">VoexlGrid体素大小</label>                                <div class="layui-input-block">                                    <input type="text" name="leafsize" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">最大迭代次数</label>                                <div class="layui-input-block">                                    <input type="text" name="maxIteration" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">表面法线/FPFH搜索范围半径</label>                                <div class="layui-input-block">                                    <input type="text" name="radiusSearch" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                    </div>                </div>                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">                    <legend>提取点云边界方式</legend>                </fieldset>                <div class="layui-form-item">                    <label class="layui-form-label">边界方法</label>                    <div class="layui-input-block">                        <input type="text" name="bjff" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                    </div>                </div>            </form>        </div>    </div></div>'
+                , content: '<!--编辑项目--><div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="margin:1px 0px">    <ul class="layui-tab-title">        <li class="layui-this">基本信息</li>        <li>工程设置</li>    </ul>    <div class="layui-tab-content" style="margin:0px 0px">        <!--基本信息-->        <div class="layui-tab-item layui-show">            <form class="layui-form" style="margin-top:0px" lay-filter="pointcloudprojectedit">                <div class="layui-form-item">                    <label class="layui-form-label" style="margin-top:10px">所属项目</label>                    <div class="layui-input-block">                        <input type="text" name="xmmc" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md4">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">采集人员</label>                                <div class="layui-input-block">                                    <input type="text" name="cjry" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo">                                <label class="layui-form-label">采集时间</label>                                <div class="layui-input-block">                                    <input type="text" name="cjsj" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">项目区域</label>                                <div class="layui-input-block">                                    <input type="text" name="xmqy" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">中心经度</label>                                <div class="layui-input-block">                                    <input type="text" name="zxjd" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">中心纬度</label>                                <div class="layui-input-block">                                    <input type="text" name="zxwd" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md8">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">坐标系统</label>                                <div class="layui-input-block">                                    <input type="text" name="kjck" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo">                                <label class="layui-form-label">数据格式</label>                                <div class="layui-input-block">                                    <input type="text" name="sjgs" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md4">                            <div class="grid-demo">                                <label class="layui-form-label">采集设备</label>                                <div class="layui-input-block">                                    <input type="text" name="cjsb" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">数据类型</label>                                <div class="layui-input-block">                                    <input type="text" name="sjlx" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md4">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">点云数目</label>                                <div class="layui-input-block">                                    <input type="text" name="dysm" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">目前流程</label>                                <div class="layui-input-block">                                    <input type="text" name="mqlc" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">采集周期</label>                                <div class="layui-input-block">                                    <input type="text" name="cjzq" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <label class="layui-form-label">备注</label>                    <div class="layui-input-block">                        <input type="text" name="bz" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                    </div>                </div>                <div class="layui-form-item" style="margin-top:5px">                    <div style="position:absolute;right:5px;">                        <button type="submit" class="layui-btn" lay-submit="" lay-filter="editpointcloudprojectinfosubmit" style="width:120px">保存</button>                    </div>                </div>            </form>        </div>        <!--工程设置-->        <div class="layui-tab-item">            <form class="layui-form" style="margin-top:0px" lay-filter="pointcloudprojectsetedit">                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">                    <legend>统计滤波参数设置</legend>                </fieldset>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">邻近点数</label>                                <div class="layui-input-block">                                    <input type="text" name="meank" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">离群点阈值</label>                                <div class="layui-input-block">                                    <input type="text" name="StddevMulThresh" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <label class="layui-form-label">设置时间</label>                    <div class="layui-input-block">                        <input type="text" name="szsj" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                    </div>                </div>                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">                    <legend>FHFP-ICP配置参数</legend>                </fieldset>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">创建时间</label>                                <div class="layui-input-block">                                    <input type="text" name="cjsj" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">VoexlGrid体素大小</label>                                <div class="layui-input-block">                                    <input type="text" name="leafsize" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                    </div>                </div>                <div class="layui-form-item">                    <div class="layui-row">                        <div class="layui-col-md6">                            <div class="grid-demo grid-demo-bg1">                                <label class="layui-form-label">最大迭代次数</label>                                <div class="layui-input-block">                                    <input type="text" name="maxIteration" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                        <div class="layui-col-md6">                            <div class="grid-demo">                                <label class="layui-form-label">表面法线/FPFH搜索范围半径</label>                                <div class="layui-input-block">                                    <input type="text" name="radiusSearch" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                                </div>                            </div>                        </div>                    </div>                </div>                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">                    <legend>提取点云边界方式</legend>                </fieldset>                <div class="layui-form-item">                    <label class="layui-form-label">边界方法</label>                    <div class="layui-input-block">                        <input type="text" name="bjff" autocomplete="off" placeholder="请输入" lay-verify="required" class="layui-input" />                    </div>                </div>            </form>        </div>    </div></div>'
                 , zIndex: layer.zIndex
                 , success: function (layero) {
                     layer.setTop(layero);
@@ -531,7 +819,7 @@ function PCloudDataInfo(id, style) {
                             else {
                                 //项目信息
                                 var projectinfo = JSON.parse(data);
-                            
+
                                 form.val("pointcloudprojectedit", {
                                     "xmmc": projectinfo.XMMC
                                     , "cjry": projectinfo.CJRY
@@ -614,11 +902,11 @@ function PCloudDataInfo(id, style) {
 
 //上传文件
 function UploadData() {
-    
-     if ((addpointclouddatalayerindex != null) || (addpointclouddatalayerindex != undefined)) {
-            layer.close(addpointclouddatalayerindex);
-        }
-     else {
+
+    if ((addpointclouddatalayerindex != null) || (addpointclouddatalayerindex != undefined)) {
+        layer.close(addpointclouddatalayerindex);
+    }
+    else {
         if (addpointclouddatalayerindex == null) {
             addpointclouddatalayerindex = layer.open({
                 type: 1
@@ -643,7 +931,7 @@ function UploadData() {
                     if (srids.length > 0) {
                         for (var i in srids) {
                             //if (srids[i].name == "China Geodetic Coordinate System 2000") {
-                                document.getElementById("kjckid").innerHTML += '<option value="' + srids[i].value + '" selected>' + srids[i].name + '</option>';
+                            document.getElementById("kjckid").innerHTML += '<option value="' + srids[i].value + '" selected>' + srids[i].name + '</option>';
                             //}
                         }
                     }
@@ -713,7 +1001,7 @@ function UploadData() {
     }
 
 
- 
+
 }
 // 获取项目区域
 function getRegion(data) {
@@ -742,7 +1030,7 @@ function getRegion(data) {
 //创建项目
 $("#projectadd").on("click", function () {
     //创建项目
-    if (((projectinfoviewlayerindex == null) && (projectinfoeditlayerindex == null) && (projectinfoaddlayerindex == null)  )) {
+    if (((projectinfoviewlayerindex == null) && (projectinfoeditlayerindex == null) && (projectinfoaddlayerindex == null))) {
         AddProject();
     }
     else {
@@ -807,3 +1095,168 @@ $("#selectpcdata").on("mouseleave", function () {
         tipslayer = -1;
     }
 });
+
+//生成随机数
+function NewGuid() {
+    return ((((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+        + (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+        + "-" + (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+        + "-" + (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+        + "-" + (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+        + "-" + (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+        + (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+        + (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1));
+}
+
+//清除临时图形
+function cleartemp() {
+    var count = 0;
+    while (count < 40) {
+        for (var i = 0; i < viewer.entities._entities._array.length; i++) {
+            if ((viewer.entities._entities._array[i]._name) && ((viewer.entities._entities._array[i]._name.indexOf("ptstemp") > -1))) {
+                viewer.entities.remove(viewer.entities._entities._array[i]);
+            }
+        }
+        count++;
+    }
+}
+
+//加载项目区域边界
+function LoadRegionalBoundary(currentprojectid) {
+
+    for (var i in layerlist.PCloudProjectList) {
+        var regionalboundary = [];
+        var regionids = [];
+        if (layerlist.PCloudProjectList[i].Id.toString() == currentprojectid) {
+            for (var j in layerlist.PCloudProjectList[i].RegionList) {
+                regionalboundary.push(JSON.parse(layerlist.PCloudProjectList[i].RegionList[j].RegionlBoundary));
+                regionids.push(layerlist.PCloudProjectList[i].RegionList[j].Id);
+            }
+
+        }
+        if (regionalboundary.length > 0) {
+            for (var i in regionalboundary) {
+                viewer.entities.add({
+                    id: "region_" + regionids[i],
+                    name: "region_" + regionids[i],
+                    polygon: {
+                        hierarchy: {
+                            positions: regionalboundary[i]
+                        },
+                        material: Cesium.Color.PALETURQUOISE.withAlpha(0.5),
+                        classificationType: Cesium.ClassificationType.CESIUM_3D_TILE,
+                    }
+                });
+            }
+
+        }
+    }
+
+}
+
+//计算产状
+function getChanzhuang(positList) {
+    points = positList;
+    var cartesian3s = [];
+    //var newcartesian3s = [];
+    var bSum = 0;
+    var lSum = 0;
+    var hSum = 0;
+    var minx = points[0].x;
+    var miny = points[0].y;
+    var minz = points[0].z;
+    var maxHeight = Cesium.Cartographic.fromCartesian(points[0]).height;
+    var minHeight = Cesium.Cartographic.fromCartesian(points[0]).height;
+    for (var i = 0; i < points.length; i++) {
+        var cartesian3 = points[i];
+        cartesian3s.push(cartesian3);
+        if (points[i].x < minx) {
+            minx = points[i].x;
+        }
+        if (points[i].y < miny) {
+            miny = points[i].y;
+        }
+        if (points[i].z < minz) {
+            minz = points[i].z;
+        }
+        var rblh = Cesium.Cartographic.fromCartesian(points[i]);
+        bSum += rblh.latitude * 180 / Math.PI;
+        lSum += rblh.longitude * 180 / Math.PI;
+        hSum += rblh.height;
+        if (rblh.height > maxHeight) {
+            maxHeight = rblh.height;
+        }
+        if (rblh.height < minHeight) {
+            minHeight = rblh.height;
+        }
+    }
+    var bAvg = bSum * Math.PI / 180 / points.length;
+    var lAvg = lSum * Math.PI / 180 / points.length;
+    var hAvg = hSum / points.length;
+
+    var opblh = new Cesium.Cartographic(lAvg, bAvg, hAvg);
+    //转换后的坐标原点
+    var opxyz = Cesium.Cartesian3.fromDegrees(opblh.longitude, opblh.latitude, opblh.height);
+
+
+
+
+
+    //var ccc = 0;     调试用
+    var cartesian3f = [];
+    //cartesian3f = cartesian3s; //调试用
+    for (var i = 0; i < cartesian3s.length; i++) {
+        var newx = -Math.sin(lAvg) * (cartesian3s[i].x - opxyz.x) + Math.cos(lAvg) * (cartesian3s[i].y - opxyz.y);
+        var newy = -Math.sin(bAvg) * Math.cos(lAvg) * (cartesian3s[i].x - opxyz.x) - Math.sin(bAvg) * Math.sin(lAvg) * (cartesian3s[i].y - opxyz.y) + Math.cos(bAvg) * (cartesian3s[i].z - opxyz.z);
+        var newz = Math.cos(bAvg) * Math.cos(lAvg) * (cartesian3s[i].x - opxyz.x) + Math.cos(bAvg) * Math.sin(lAvg) * (cartesian3s[i].y - opxyz.y) + Math.sin(bAvg) * (cartesian3s[i].z - opxyz.z);
+        var cartesian33 = new Cesium.Cartesian3(newx, newy, newz);
+        //ccc = newx;
+        cartesian3f.push(cartesian33);
+    }
+
+    //求取产状要素
+    var qingXiang = 0;
+    var qingJiao = 0;
+    //设拟合面的表达式为Ax+By+Cz+D = 0
+    var A = (cartesian3f[1].y - cartesian3f[0].y) * (cartesian3f[2].z - cartesian3f[0].z) - (cartesian3f[1].z - cartesian3f[0].z) * (cartesian3f[2].y - cartesian3f[0].y);
+    var B = (cartesian3f[1].z - cartesian3f[0].z) * (cartesian3f[2].x - cartesian3f[0].x) - (cartesian3f[1].x - cartesian3f[0].x) * (cartesian3f[2].z - cartesian3f[0].z);
+    var C = (cartesian3f[1].x - cartesian3f[0].x) * (cartesian3f[2].y - cartesian3f[0].y) - (cartesian3f[1].y - cartesian3f[0].y) * (cartesian3f[2].x - cartesian3f[0].x);
+
+    var nx = A / Math.sqrt(A * A + B * B + C * C);
+    var ny = B / Math.sqrt(A * A + B * B + C * C);
+    var nz = C / Math.sqrt(A * A + B * B + C * C);
+
+    if (nz == 0) {
+        qingJiao = 0.5 * Math.PI;
+        if (nx < 0) {
+            qingXiang = 2 * Math.PI - Math.acos(ny / Math.sqrt(nx * nx + ny * ny));
+        }
+        else {
+            qingXiang = Math.acos(ny / Math.sqrt(nx * nx + ny * ny));
+        }
+    }
+    else if (nz > 0) {
+        qingJiao = Math.acos(nz);
+        if (nx < 0) {
+            qingXiang = 2 * Math.PI - Math.acos(ny / Math.sqrt(nx * nx + ny * ny));
+        }
+        else {
+            qingXiang = Math.acos(ny / Math.sqrt(nx * nx + ny * ny));
+        }
+    }
+    else {
+        qingJiao = Math.acos(-nz);
+        if (nx < 0) {
+            qingXiang = 2 * Math.PI - Math.acos(-ny / Math.sqrt(nx * nx + ny * ny));
+        }
+        else {
+            qingXiang = Math.acos(-ny / Math.sqrt(nx * nx + ny * ny));
+        }
+    }
+    qingXiang = qingXiang * 180 / Math.PI;
+    qingJiao = qingJiao * 180 / Math.PI;
+    var tenp = {};
+    tenp.qingXiang = qingXiang;
+    tenp.qingJiao = qingJiao;
+    return tenp;
+}

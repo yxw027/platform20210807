@@ -78,19 +78,72 @@ function LoadPointCloud(obj) {
     //缩放至模型
     viewer.zoomTo(curpointcloudtileset);
 
+    //点云图层可以设置样式 
+    let style = {
+        color: {
+            conditions: [
+                ['${Intensity} >= 10000000000', 'color("green", 0.5)'],
+                ['${Intensity} >= 0.2', 'color("red")'],
+                ['true', 'color("blue")']
+            ]
+        },
+        show: '${Intensity} >0',
+        meta: {
+            description: '"Building id ${id} has height ${Height}."'
+        }
+    }
+    curpointcloudtileset.style = new Cesium.Cesium3DTileStyle(style);
 
-    //ugByDistance(curpointcloudtileset);
-
-
-};
+    viewer.extend(Cesium.viewerCesium3DTilesInspectorMixin);
 
 
 
 
+    //1.相机事件（移动开始、移动结束等等）
+    viewer.scene.camera.moveEnd.addEventListener(function () {
 
-let transformPos = { x: -518467.65, y: -2537603.97, z: -42.13 };
-let blhPos = [116.46000, 39.90002];
-this.initPointCloudCheck(transformPos, blhPos);
+    });
+    //2.鼠标事件（单击、移动、右键等）
+    var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+
+    handler.setInputAction(function (movement) {
+
+
+    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+    //3.渲染事件(实时渲染，很关键的一个事件)
+    var renderEnd = viewer.scene.postRender.addEventListener(function () {
+
+    });
+
+    handler.setInputAction(function (movement) {
+
+    }, Cesium.ScreenSpaceEventType.MIDDLE_CLICK);
+    // ugByDistance(curpointcloudtileset);
+    //4、左键
+    handler.setInputAction(function (movement) {
+        let feature = viewer.scene.pick(movement.position);
+
+
+        if (feature) {
+            let pickedCar3 = getCartesian3fromPick(viewer, movement);
+
+
+        }
+    }, this.Cesium.ScreenSpaceEventType.LEFT_CLICK);
+}
+
+
+function LoadChanges(obj) {
+
+
+}
+
+
+
+
+//let transformPos = { x: -518467.65, y: -2537603.97, z: -42.13 };
+//let blhPos = [116.46000, 39.90002];
+//this.initPointCloudCheck(transformPos, blhPos);
 
 function ugByDistance(tileSet) {
     //let viewer = this.CesiumViewer;
@@ -112,7 +165,7 @@ function ugByDistance(tileSet) {
     this.changePointSizeByDistance(tileSet, distance);
 }
 
-function changePointSizeByDistance(tileSet, distance){
+function changePointSizeByDistance(tileSet, distance) {
     let arrayValue = this.$store.state.gradArry;
     if (arrayValue.length === 0) {
         arrayValue = window.tunneManager.initGradArry(0, 0);
@@ -139,7 +192,7 @@ function changePointSizeByDistance(tileSet, distance){
     tileSet.style = pointCloudPointStyle;
 }
 
-function initPointCloudStyle(arrayValue,pointSize) {
+function initPointCloudStyle(arrayValue, pointSize) {
     let conditions = [];
     for (let i = arrayValue.length - 1; i >= 0; i--) {
         let condition = [];
@@ -157,7 +210,7 @@ function initPointCloudStyle(arrayValue,pointSize) {
     let showOther = this.$store.state.showCloudOther;
     let colorStyle = new Cesium.Cesium3DTileSyle({
         "defines": {
-            "pValue":"(${Intensity}/1000)-1"
+            "pValue": "(${Intensity}/1000)-1"
         },
         color: {
             "conditions": conditions
@@ -165,7 +218,7 @@ function initPointCloudStyle(arrayValue,pointSize) {
         show: {
             conditions: [
                 ['${Intensity}<=0', showOther],
-                ['${Intensity}<=0','true']
+                ['${Intensity}<=0', 'true']
             ]
         },
         pointSize: pointSize
@@ -174,22 +227,20 @@ function initPointCloudStyle(arrayValue,pointSize) {
 }
 
 function initPointCloudCheck(transformPos, b1lhPos) {
-    this.destoryClick();
-    let _this = this;
     this.handler.setInputAction(function (movement) {
         let feature = _this.CesiumViewer.scene.pick(movement.position);
         if (feature) {
-            let pickedCar3 = cesiumCommon.getCartesian3fromPick (_this.CesiumViewer, movement);
-            this.createEntity(pickedCar3, Cesịụm.Color.YELLOW); 
+            let pickedCar3 = cesiumCommon.getCartesian3fromPick(_this.CesiumViewer, movement);
+            this.createEntity(pickedCar3, Cesịụm.Color.YELLOW);
             let url = feature.content.ur1;
             let pickId = feature.content._pickId.key;
             let pointLength = feature.content._pointCloud.pointsLength;
 
-            axios.get(ur1, {
+            axios.get(url, {
                 responseType: ' arraybuffer',
 
             }).then((res) => {
-                _this.processPntsData(res.data, pickId, pickedCar3, pointLength, transformPos, b1lhPos);
+                processPntsData(res.data, pickId, pickedCar3, pointLength, transformPos, b1lhPos);
 
             });
 

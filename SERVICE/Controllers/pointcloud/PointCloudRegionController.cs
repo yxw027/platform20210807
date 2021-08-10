@@ -90,5 +90,40 @@ namespace SERVICE.Controllers
                 return JsonHelper.ToJson(new ResponseResult((int)MODEL.Enum.ResponseResultCode.Failure, "验证用户失败！", string.Empty));
             }
         }
+
+
+        /// <summary>
+        /// 更新点云时序数据信息
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut]
+        public string UpdateRegionlBoundaryInfo()
+        {
+            #region 参数
+            string cookie = HttpContext.Current.Request.Form["cookie"];
+            string regionalboundary = HttpContext.Current.Request.Form["regionalboundary"];
+            string projectId = HttpContext.Current.Request.Form["projectId"];
+            string regionid = HttpContext.Current.Request.Form["regionid"];
+
+            #endregion
+
+            string userbsms = string.Empty;
+            COM.CookieHelper.CookieResult cookieResult = ManageHelper.ValidateCookie(pgsqlConnection, cookie, ref userbsms);
+
+            if (cookieResult == COM.CookieHelper.CookieResult.SuccessCookkie)
+            {
+                int updatecount = PostgresqlHelper.UpdateData(pgsqlConnection, string.Format("UPDATE pointcloud_data_region SET regionalboundary={0} WHERE id={1}  AND ztm={2}", SQLHelper.UpdateString(regionalboundary), regionid, (int)MODEL.Enum.State.InUse));
+                if (updatecount == 1)
+                {
+                    return "更新成功！";
+                }
+                return "更新失败，请重试！";
+
+            }
+            else
+            {
+                return "用户无权限！";
+            }
+        }
     }
 }
