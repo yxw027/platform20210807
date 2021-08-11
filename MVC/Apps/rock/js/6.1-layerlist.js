@@ -1,7 +1,7 @@
 ﻿var layers = [];//图层列表数据
 var windowInfoList = [];//测区数据
 var modleInfoList = [];//模型数据
-
+var modeljiazaiFlag = true;
 //图层列表widget
 function LoadLayerListLayer(id) {
     if (id == null) {
@@ -15,6 +15,7 @@ function LoadLayerListLayer(id) {
             $.ajax({
                 url: servicesurl + "/api/RockLayer/GetLayerInfo", type: "get", data: { "id": id, "cookie": document.cookie },
                 success: function (data) {
+
                     layer.close(loadingceindex);
                     if (data == "") {
                         layer.msg("无项目图层信息！", { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
@@ -360,854 +361,1730 @@ function LoadLayerListLayer(id) {
                         //TODO MORE LAYER
 
                         console.log(layers);
-                        if (projectindex != null) {
-                            tree.render({
-                                elem: '#prjlayerlist'
-                                , id: 'prjlayerlistid'
-                                , edit: ['add', 'update', 'del']
-                                , showCheckbox: true
-                                , customCheckbox: true
-                                , showLine: false
-                                , data: layers
-                                , accordion: false
-                                , click: function (obj) {
-                                    //点击事件
-                                    //如果选中就缩放到目标
-                                    //如果未选中就不做任何处理
-                                    var data = obj.data;
+                        var loadingceindex = layer.load(0, { shade: 0.2, zIndex: layer.zIndex, success: function (loadlayero) { layer.setTop(loadlayero); } });
+
+                        $.ajax({
+                            url: window.parent.servicesurl + "/api/RockDesign/GetRockDesignListInfo", type: "get", data: { "cookie": document.cookie, "projectId": id },
+                            success: function (data) {
+                                layer.close(loadingceindex);
+                                if (data == "") {
+                                    //layer.msg("无陡崖用户信息！", { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+                                    // curuserid = null;
+                                }
+                                else {
                                     console.log(data);
-                                    if (data.checked) {
-                                        if (data.children != undefined) {
-                                            if (data.type == "FLZWINDOW") {
-                                                //viewer.zoomTo(viewer.entities.getById(data.id + "_LABEL"));
-                                                console.log(data);
-                                                viewer.zoomTo(viewer.entities.getById(data.id + "_LABEL"), new Cesium.HeadingPitchRange(Cesium.Math.toRadians(-(parseFloat(data.datas.level))), Cesium.Math.toRadians(data.datas.vertical), 40));
+                                    var designList = JSON.parse(data);
+                                    console.log(designList);
+                                    var rockDesignDataLayer = new Object;
+                                    rockDesignDataLayer.title = "设计数据";
+                                    rockDesignDataLayer.type = "DESIGN";
+                                    rockDesignDataLayer.showCheckbox = true;//显示复选框
+                                    var rockDesignDataLayerchild = [];
 
-                                            } else {
-                                                var entities = [];
-                                                for (var i in data.children) {
-                                                    var entity = viewer.entities.getById(data.children[i].id)
-                                                    if (entity != undefined) {
-                                                        entities.push(entity);
-                                                    }
-                                                }
+                                    for (i = 0; i < designList.length; i++) {
+                                        var rockSectionDataLayer = new Object;
+                                        rockSectionDataLayer.title = "剖面-" + designList[i].name;
+                                        rockSectionDataLayer.type = "SECTION";
+                                        rockSectionDataLayer.showCheckbox = true;//显示复选框
+                                       var x = JSON.parse(designList[i].profilePostion);
+                                     //var y =  JSON.parse(designList[i].measurWindowPostion);
+                                     //   var xx =  JSON.parse(designList[i].probeSlotPostion);
+                                     //   var xxx = JSON.parse(designList[i].drillHolePostion);
+                                        console.log(x);
+                                        //console.log(xx);
+                                        //console.log(xxx);
+                                        //console.log(y);
+                                        var rockSectionDataLayerchild = [];
+                                        //剖面
+                                        if (designList[i].profilePostion != "") {
+                                            var pointListtem = JSON.parse(designList[i].profilePostion);
+                                            var profilelayer = new Object;
+                                            profilelayer.data = pointListtem
+                                            profilelayer.title = pointListtem.name;
+                                            profilelayer.type = "PROFILE";
+                                            profilelayer.checked = false;
+                                            profilelayer.showCheckbox = true;//显示复选框
+                                            profilelayer.id = "PROFILE" + designList[i].id;
+                                            profilelayer.remark = designList[i].remark;
+                                            profilelayer.lineId = designList[i].id;
+                                            rockSectionDataLayerchild.push(profilelayer);
+                                        }
+                                        //测窗
+                                        if (designList[i].measurWindowPostion != "") {
 
-                                                if (entities.length > 0) {
-                                                    viewer.zoomTo(entities, new Cesium.HeadingPitchRange(Cesium.Math.toRadians(300), Cesium.Math.toRadians(-120), 50));
-                                                }
+                                            var pointListtem = JSON.parse(designList[i].measurWindowPostion);
+                                            for (var m = 0; m < pointListtem.length; m++) {
+                                                var profilelayer = new Object;
+                                                profilelayer.data = pointListtem[m];
+                                                profilelayer.list = pointListtem;
+                                                profilelayer.title = pointListtem[m].name;
+                                                profilelayer.type = "MENSURE";
+                                                profilelayer.checked = false;
+                                                profilelayer.showCheckbox = true;//显示复选框
+                                                profilelayer.id = "MENSURE" + pointListtem[m].code + designList[i].id;
+                                                profilelayer.remark = designList[i].remark;
+                                                profilelayer.lineId = designList[i].id;
+                                                rockSectionDataLayerchild.push(profilelayer);
                                             }
                                             
                                         }
-                                        else {
+                                  
+                                        ////探槽
+                                        if (designList[i].probeSlotPostion != "") {
+                                            var pointListtem = JSON.parse(designList[i].probeSlotPostion);
+                                            var profilelayer = new Object;
+                                            profilelayer.data = pointListtem;
+                                            profilelayer.title = pointListtem.name;
+                                            profilelayer.type = "PROBESLOT";
+                                            profilelayer.checked = false;
+                                            profilelayer.showCheckbox = true;//显示复选框
+                                            profilelayer.id = "PROBESLOT" + designList[i].id;
+                                            profilelayer.remark = designList[i].remark;
+                                            profilelayer.pointId = designList[i].id;
+                                            rockSectionDataLayerchild.push(profilelayer);
+                                        }
+                                        //钻孔
+                                        if (designList[i].drillHolePostion != "") {
+                                            var pointListtem = JSON.parse(designList[i].drillHolePostion);
+                                            var profilelayer = new Object;
+                                            profilelayer.data = pointListtem;
+                                            profilelayer.title = pointListtem.name;
+                                            profilelayer.type = "DRILLHOLE";
+                                            profilelayer.checked = false;
+                                            profilelayer.showCheckbox = true;//显示复选框
+                                            profilelayer.id = "DRILLHOLE" + designList[i].id;
+                                            profilelayer.remark = designList[i].remark;
+                                            profilelayer.pointId = designList[i].id;
+                                            rockSectionDataLayerchild.push(profilelayer);
+                                        }
+                                        rockSectionDataLayer.children = rockSectionDataLayerchild;
+                                        rockDesignDataLayerchild.push(rockSectionDataLayer);
+                                    }
+                                    rockDesignDataLayer.children = rockDesignDataLayerchild;
+                                    layers.push(rockDesignDataLayer);
+                                   
+                                    console.log(layers);
+                                    console.log(2222);
+                                }
+                                if (projectindex != null) {
+                                    tree.render({
+                                        elem: '#prjlayerlist'
+                                        , id: 'prjlayerlistid'
+                                        , edit: ['add', 'update', 'del']
+                                        , showCheckbox: true
+                                        , customCheckbox: true
+                                        , showLine: false
+                                        , data: layers
+                                        , accordion: false
+                                        , click: function (obj) {
+                                            //点击事件
+                                            //如果选中就缩放到目标
+                                            //如果未选中就不做任何处理
+                                            var data = obj.data;
                                             console.log(data);
-                                            //  viewer.flyTo(viewer.entities.getById(data.id), { duration: 1, offset: new Cesium.HeadingPitchRange(Cesium.Math.toRadians(0), Cesium.Math.toRadians(-90), 50) });
-                                            // viewer.zoomTo(viewer.entities.getById(data.id));//
-                                            if (data.type == "FLZJIELI") {// || data.type == "YOUSHIMIAN"
-                                                //viewer.zoomTo(viewer.entities.getById(data.id + "_LABEL"));
-                                                console.log(data);//测窗的
-                                                for (var i in layers[0].children) {
-                                                    for (var j in layers[0].children[i].children) {
-                                                        if (data.id == layers[0].children[i].children[j].id) {
-                                                            console.log(layers[0].children[i]);
-                                                            viewer.zoomTo(viewer.entities.getById(data.id + "_LABEL"), new Cesium.HeadingPitchRange(Cesium.Math.toRadians(-(parseFloat(layers[0].children[i].datas.level))), Cesium.Math.toRadians(layers[0].children[i].datas.vertical), 20));
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                                
-                                                
-                                            } else if (data.type == "YOUSHIMIAN") {// || data.type == "YOUSHIMIAN"
-                                                //viewer.zoomTo(viewer.entities.getById(data.id + "_LABEL"));
-                                                console.log(data);
-                                                viewer.zoomTo(viewer.entities.getById(data.id + "_LABEL"), new Cesium.HeadingPitchRange(Cesium.Math.toRadians(data.datas.inclination - 180), Cesium.Math.toRadians(data.datas.dipAngle-90), 40));
-                                            } else if (data.type == "PROJECTSUMODEL") {// || data.type == "YOUSHIMIAN"
-                                                if (curtileset!=null) {
-                                                    //viewer.zoomTo(curtileset);
-                                                    viewer.zoomTo(curtileset, new Cesium.HeadingPitchRange(Cesium.Math.toRadians(0), Cesium.Math.toRadians(-90), 0));
-                                                }
-                                                
-                                            }else {
-                                                viewer.zoomTo(viewer.entities.getById(data.id))
-                                            } 
-                                           
-                                        }
-                                    }
+                                            if (data.checked) {
+                                                if (data.children != undefined) {
+                                                    if (data.type == "FLZWINDOW") {
+                                                        //viewer.zoomTo(viewer.entities.getById(data.id + "_LABEL"));
+                                                        console.log(data);
+                                                        viewer.zoomTo(viewer.entities.getById(data.id + "_LABEL"), new Cesium.HeadingPitchRange(Cesium.Math.toRadians(-(parseFloat(data.datas.level))), Cesium.Math.toRadians(data.datas.vertical), 40));
 
-                                }
-                                , oncheck: function (obj) {
-                                    //根据选中状态在地图中添加元素
-                                    var checked = obj.checked;
-                                    var data = obj.data;
-
-                                    //TODO解决模型多选
-
-
-                                    if (checked) {
-                                        if (data.children != undefined) {
-                                            //多选
-                                            if (data.type == "FLZPOINT") {
-                                                //全选监测点
-                                                for (var i in data.children) {
-                                                    var entity = viewer.entities.getById(data.children[i].id);
-                                                    if (entity == undefined) {
-                                                        //当无此元素添加
-                                                        viewer.entities.add({
-                                                            id: data.children[i].id,
-                                                            position: data.children[i].postion,
-                                                            billboard: {
-                                                                image: '../../Resources/img/map/marker.png',
-                                                                verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-                                                                width: 24,
-                                                                height: 24,
-                                                            }
-                                                        });
-                                                    }
-
-                                                    var entitylabel = viewer.entities.getById(data.children[i].id + "_LABEL");
-                                                    if (entitylabel == undefined) {
-                                                        viewer.entities.add({
-                                                            id: data.children[i].id + "_LABEL",
-                                                            position: data.children[i].postion,
-                                                            label: {
-                                                                text: data.children[i].title,
-                                                                font: '16px Times New Roman',
-                                                                horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-                                                                verticalOrigin: Cesium.VerticalOrigin.CENTER,
-                                                                pixelOffset: new Cesium.Cartesian2(0.0, -36),
-                                                            }
-                                                        });
-                                                    }
-
-                                                    data.children[i].checked = true;
-                                                }
-                                            }
-                                            else if (data.type == "FLZLINE") {
-                                                //全选线
-                                                for (var i in data.children) {
-                                                    var entity = viewer.entities.getById(data.children[i].id);
-                                                    if (entity == undefined) {
-                                                        var line = data.children[i].pointList; 
-                                                        var sum = 0;
-                                                        
-                                                        for (var x = 0; x < line.length - 1; x++) {
-                                                            var point1 = line[x];
-                                                            var point2 = line[x + 1];
-
-                                                            var distance = Cesium.Cartesian3.distance(point1, point2)
-                                                            if (distance == NaN) {
-                                                                sum = 0;
-                                                                break;
-                                                            }
-                                                            else {
-                                                                sum += distance;
-                                                            }
-                                                        }
-                                                        viewer.entities.add({
-                                                            id: data.children[i].id,
-                                                            polyline: {
-                                                                positions: line,
-                                                                width: 3,
-                                                                material: Cesium.Color.YELLOW,
-                                                                depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
-                                                                    color: Cesium.Color.YELLOW
-                                                                })
-                                                            }
-                                                        });
-
-                                                        viewer.entities.add({
-                                                            id: data.children[i].id + "_LABEL",
-                                                            position: line[0],
-                                                            label: {
-                                                                text: data.children[i].title + '-长度：' + sum.toFixed(2) + '米',
-                                                                font: '20px Times New Roman',
-                                                                material: Cesium.Color.YELLOW,
-                                                                depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
-                                                                    color: Cesium.Color.YELLOW
-                                                                }),
-                                                                horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-                                                                verticalOrigin: Cesium.VerticalOrigin.CENTER,
-                                                                pixelOffset: new Cesium.Cartesian2(0.0, -60),
-                                                            }
-                                                            
-                                                        });
-
-                                                    }
-
-                                                    data.children[i].checked = true;
-                                                }
-                                            } else if (data.type == "FLZWINDOW") {
-                                                //全选侧窗
-                                                console.log(data);
-                                                var entityFater = viewer.entities.getById(data.id);
-                                                var sum = 0;
-                                              
-                                                if (entityFater == undefined) {
-                                                    var points = data.pointList;
-                                                    points.push(points[0]);
-                                                    viewer.entities.add({
-                                                        id: data.id,
-                                                        polyline: {
-                                                            positions: points,
-                                                            width: 0.5,
-                                                            arcType: Cesium.ArcType.RHUMB,
-                                                            material: Cesium.Color.BLUE,
-                                                            depthFailMaterial: Cesium.Color.BLUE, 
-                                                            show: true,
-                                                           // classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
-                                                        },
-                                                    });
-                                                    viewer.entities.add({
-                                                        id: data.id + "_LABEL",
-                                                        position: new Cesium.Cartesian3(data.Centerx, data.Centery, data.Centerz),
-                                                        point: {
-                                                            pixelSize: 1,
-                                                            color: Cesium.Color.BLUE
-                                                        }
-                                                    });
-
-                                                }
-                                                for (var i in data.children) {
-                                                    
-                                                    var entity = viewer.entities.getById(data.children[i].id);
-                                                    if (entity == undefined) {
-                                                        //viewer.entities.add({
-                                                        //    id: data.children[i].id,
-                                                        //    polygon: {
-                                                        //        hierarchy: {
-                                                        //            positions: data.children[i].pointList
-                                                        //        },
-                                                        //        material: Cesium.Color.RED.withAlpha(0.8),
-                                                        //        classificationType: Cesium.ClassificationType.CESIUM_3D_TILE,
-                                                        //    }
-                                                        //});
-                                                        var points = data.children[i].pointList;
-                                                        points.push(points[0]);
-                                                        viewer.entities.add({
-                                                            id: data.children[i].id,
-                                                            polyline: {
-                                                                positions: points,
-                                                                width: 1,
-                                                                //arcType: Cesium.ArcType.RHUMB,
-                                                                material: Cesium.Color.RED,
-                                                                depthFailMaterial: Cesium.Color.RED,
-                                                                show: true,
-                                                                //clampToGround: true,
-                                                            },
-                                                        });
-                                                        console.log(data.children[i]);
-                                                        viewer.entities.add({
-                                                            id: data.children[i].id + "_LABEL",
-                                                            position: new Cesium.Cartesian3(data.children[i].Centerx, data.children[i].Centery, data.children[i].Centerz),
-                                                            point: {
-                                                                pixelSize: 1,
-                                                                color: Cesium.Color.RED.withAlpha(0.1)
-                                                            }
-                                                        });
-                                                    }
-
-                                                    data.children[i].checked = true;
-                                                }
-                                                data.checked = true;
-                                            } else if (data.type == "FLZAREA") {
-                                                
-
-                                                console.log(data);
-                                                //点击的线
-                                                //全选监测剖面
-                                                for (var i in data.children) {
-                                                    var entity = viewer.entities.getById(data.children[i].id);
-                                                    if (entity == undefined) {
-                                                        var points = data.children[i].pointList;
-                                                        points.push(points[0]);
-                                                        viewer.entities.add({
-                                                            id: data.children[i].id,
-                                                            polyline: {
-                                                                positions: points,
-                                                                width: 3,
-                                                                //arcType: Cesium.ArcType.RHUMB,
-                                                                material: Cesium.Color.YELLOW,
-                                                                
-                                                                depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
-                                                                    color: Cesium.Color.YELLOW
-                                                                }),
-                                                                //show: true,
-                                                                //clampToGround: true,
-                                                                //classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
-                                                            },
-                                                        });
-                                                    }
-
-                                                    data.children[i].checked = true;
-                                                }
-                                            } else if (data.type == "DOMSTRPLA") {//优势结构面
-
-
-                                                console.log(data);
-                                                //点击的线
-                                                //全选优势结构面
-                                                for (var i in data.children) {
-                                                    var entity = viewer.entities.getById(data.children[i].id);
-                                                    if (entity == undefined) {
-                                                        
-                                                        viewer.entities.add({
-                                                            id: data.children[i].id,
-                                                            polygon: {
-                                                                hierarchy: {
-                                                                    positions: data.children[i].pointList
-                                                                },
-                                                                classificationType: Cesium.ClassificationType.CESIUM_3D_TILE,
-                                                                material: Cesium.Color.ORANGE.withAlpha(0.3),
-
-                                                                //depthFailMaterial: Cesium.Color.ORANGE.withAlpha(0.3),
-                                                            }
-                                                        });
-                                                        viewer.entities.add({
-                                                            id: data.children[i].id + "_LABEL",
-                                                            position: new Cesium.Cartesian3(data.children[i].Centerx, data.children[i].Centery, data.children[i].Centerz),
-                                                            point: {
-                                                                pixelSize: 1,
-                                                                color: Cesium.Color.ORANGE
-                                                            }
-                                                        });
-                                                    }
-                                                    data.children[i].checked = true;
-                                                }
-                                            }
-
-
-                                            data.checked = true;
-                                        }
-                                        else {
-                                            //单选
-                                            if (data.type == "PROJECTCENTER") {
-                                                //项目位置
-                                                console.log(curtileset);
-                                                console.log(data);
-                                                var entity = viewer.entities.getById(data.id);
-                                                if (entity == undefined) {
-                                                    viewer.entities.add({
-                                                        id: data.id,
-                                                        position: Cesium.Cartesian3.fromDegrees(data.bl.L, data.bl.B),
-                                                        billboard: {
-                                                            image: '../../Resources/img/map/marker.png',
-                                                            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-                                                            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                                                            width: 24,
-                                                            height: 24,
-                                                        }
-                                                    });
-                                                }
-
-                                                var entitylabel = viewer.entities.getById(data.id + "_LABEL");
-                                                if (entitylabel == undefined) {
-                                                    viewer.entities.add({
-                                                        id: data.id + "_LABEL",
-                                                        position: Cesium.Cartesian3.fromDegrees(data.bl.L, data.bl.B),
-                                                        label: {
-                                                            text: data.label,
-                                                            font: '24px Times New Roman',
-                                                            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-                                                            verticalOrigin: Cesium.VerticalOrigin.CENTER,
-                                                            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                                                            pixelOffset: new Cesium.Cartesian2(0.0, -60),
-                                                        }
-                                                    });
-                                                }
-
-                                                data.checked = true;
-                                            }
-                                            else if (data.type == "PROJECTSUMODEL") {
-                                               
-                                                for (var i in layers) {
-                                                    if (layers[i].title == "三维实景模型") {
-                                                        for (var j in layers[i].children) {
-                                                            if (data.id != layers[i].children[j].id) {
-                                                                layers[i].children[j].checked = false;
-                                                            } else {
-                                                                layers[i].children[j].checked = true;
-                                                                layers[i].children[j].spread = true;
-                                                                layers[i].spread = true;
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                             
-
-                                                if (modleInfo != null && data.id != modleInfo.id) {
-
-                                                    modleInfo = data; 
-                                                    console.log(viewer);
-                                                    console.log(viewer.entities);
-                                                    tree.reload('prjlayerlistid', { data: layers });
-                                                }
-                                                modleInfo = data;
-                                                
-                                                
-                                                //项目模型
-                                                var loadingceindex = layer.load(0, { shade: 0.2, zIndex: layer.zIndex, success: function (loadlayero) { layer.setTop(loadlayero); } });
-
-                                                LoadModel(data);
-                                                layer.close(loadingceindex);
-
-                                            }
-                                            else if (data.type == "FLZJIELI") {
-                                                //节理
-                                                var entity = viewer.entities.getById(data.id);
-                                                if (entity == undefined) {
-                                                    var points = data.pointList;
-                                                    points.push(points[0]);
-                                                    viewer.entities.add({
-                                                        id: data.id,
-                                                        polyline: {
-                                                            positions: points,
-                                                            width: 1,
-                                                            arcType: Cesium.ArcType.RHUMB,
-                                                            material: Cesium.Color.RED,
-                                                            depthFailMaterial: Cesium.Color.RED,
-                                                            show: true,
-                                                            //clampToGround: true,
-                                                            //classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
-                                                        },
-                                                    });
-
-                                                    viewer.entities.add({
-                                                        id: data.id + "_LABEL",
-                                                        position: new Cesium.Cartesian3(data.Centerx, data.Centery, data.Centerz),
-                                                        point: {
-                                                            pixelSize: 1,
-                                                            color: Cesium.Color.RED.withAlpha(0.1)
-                                                        }
-                                                    });
-                                                }
-                                                data.checked = true;
-                                                //看看把父亲也选中
-                                                for (var i in layers[0].children) {
-                                                    for (var j in layers[0].children[i].children) {
-                                                        if (data.id == layers[0].children[i].children[j].id) {
-                                                            var entityFater = viewer.entities.getById(layers[0].children[i].id);
-                                                            if (entityFater == undefined) {
-                                                                var points = layers[0].children[i].pointList;
-                                                               
-                                                                points.push(points[0]);
-                                                                viewer.entities.add({
-                                                                    id: layers[0].children[i].id,
-                                                                    polyline: {
-                                                                        positions: points,
-                                                                        width: 0.5,
-                                                                        arcType: Cesium.ArcType.RHUMB,
-                                                                        material: Cesium.Color.BLUE,
-                                                                        depthFailMaterial: Cesium.Color.BLUE,
-                                                                        show: true,
-                                                                    },
-                                                                });
-                                                                viewer.entities.add({
-                                                                    id: layers[0].children[i].id + "_LABEL",
-                                                                    position: new Cesium.Cartesian3(layers[0].children[i].Centerx, layers[0].children[i].Centery, layers[0].children[i].Centerz),
-                                                                    point: {
-                                                                        pixelSize: 1,
-                                                                        color: Cesium.Color.BLUE
-                                                                    }
-                                                                });
-                                                                layers[0].children[i].checked = true;
-                                                            }
-
-
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                            } else if (data.type == "YOUSHIMIAN") {
-                                                //优势结构面
-                                                var entity = viewer.entities.getById(data.id);
-                                                if (entity == undefined) {
-                                                    var points = data.pointList;
-                                                    var sum = 0;
-                                                    
-                                                    viewer.entities.add({
-                                                        id: data.id,
-                                                        polygon: {
-                                                            hierarchy: {
-                                                                positions: points
-                                                            },
-                                                            material: Cesium.Color.ORANGE.withAlpha(0.5),
-                                                         //   depthFailMaterial: Cesium.Color.ORANGE.withAlpha(0.3),
-                                                            classificationType: Cesium.ClassificationType.CESIUM_3D_TILE,
-                                                        }
-                                                    });
-
-                                                    viewer.entities.add({
-                                                        id: data.id + "_LABEL",
-                                                        position: new Cesium.Cartesian3(data.Centerx, data.Centery, data.Centerz),
-                                                        point: {
-                                                            pixelSize: 1,
-                                                            color: Cesium.Color.ORANGE
-                                                        }
-                                                    });
-                                                }
-                                                data.checked = true;
-                                                //看看把父亲也选中
-                                            }
-                                            else if (data.type == "BIANJIE") {
-                                                //消落带边界
-                                                console.log(data);
-                                                var entityFater = viewer.entities.getById(data.id);
-                                                var sum = 0;
-
-                                                if (entityFater == undefined) {
-                                                    var points = data.pointList;
-                                                    points.push(points[0]);
-                                                    viewer.entities.add({
-                                                        id: data.id,
-                                                        polyline: {
-                                                            positions: points,
-                                                            width: 3,
-                                                            //arcType: Cesium.ArcType.RHUMB,
-                                                            material: Cesium.Color.YELLOW,
-                                                            depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
-                                                                color: Cesium.Color.YELLOW
-                                                            }),
-                                                            show: true,
-                                                            //clampToGround: true,
-                                                            classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
-                                                        },
-                                                    });
-                                                    
-
-                                                }
-                                                data.checked = true;
-                                            }
-                                            else if (data.type == "FLZPOINT") {
-                                                //监测点
-                                                var entity = viewer.entities.getById(data.id);
-                                                if (entity == undefined) {
-                                                    //当无此元素添加
-                                                    viewer.entities.add({
-                                                        id: data.id,
-                                                        position: data.postion ,//new Cesium.Cartesian3.fromDegrees(data.lbh.ls, data.lbh.bs, data.lbh.hs),
-                                                        billboard: {
-                                                        image: '../../Resources/img/map/marker.png',
-                                                        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-                                                        width: 24,
-                                                        height: 24,
-                                                    }
-                                                    });
-                                                }
-
-                                                var entitylabel = viewer.entities.getById(data.id + "_LABEL");
-                                                if (entitylabel == undefined) {
-                                                    viewer.entities.add({
-                                                        id: data.id + "_LABEL",
-                                                        position: data.postion,
-                                                           label: {
-                                                            text: data.title,
-                                                            font: '16px Times New Roman',
-                                                            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-                                                            verticalOrigin: Cesium.VerticalOrigin.CENTER,
-                                                            pixelOffset: new Cesium.Cartesian2(0.0, -36),
-                                                        }
-                                                    });
-                                                }
-
-                                                data.checked = true;
-                                            }
-                                            else if (data.type == "FLZLINE") {
-                                                //点击的线
-                                                console.log(data);
-                                                var sum = 0;
-                                                var entity = viewer.entities.getById(data.id);
-                                                if (entity == undefined) {
-                                                    var line = data.pointList;
-                                                    for (var i = 0; i < line.length - 1; i++) {
-                                                        var point1 = line[i];
-                                                        var point2 = line[i+1];
-
-                                                        var distance = Cesium.Cartesian3.distance(point1, point2)
-                                                        if (distance == NaN) {
-                                                            sum = 0;
-                                                            break;
-                                                        }
-                                                        else {
-                                                            sum += distance;
-                                                        }
-                                                    }
-                                                  
-
-                                                    var points = data.pointList;
-                                                    viewer.entities.add({
-                                                        id: data.id,
-                                                        polyline: {
-                                                            positions: points,
-                                                            width: 1,
-                                                            //arcType: Cesium.ArcType.RHUMB,
-                                                            material: Cesium.Color.YELLOW,
-                                                            depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
-                                                                color: Cesium.Color.YELLOW
-                                                            }),//深度检测失败，用什么显示
-                                                            //show: true,
-                                                            //clampToGround: true,
-                                                            //classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
-                                                        },
-                                                    });
-
-                                                    viewer.entities.add({
-                                                        id: data.id + "_LABEL",
-                                                        position: points[0],
-                                                        label: {
-                                                            text: data.title + '-长度：' + sum.toFixed(2) + '米',
-                                                            font: '20px Times New Roman',
-                                                            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-                                                            verticalOrigin: Cesium.VerticalOrigin.CENTER,
-                                                            pixelOffset: new Cesium.Cartesian2(0.0, -60),
-                                                        }
-                                                    });
-                                                    
-
-                                                }
-
-                                                data.checked = true;
-                                            } else if (data.type == "FLZAREA") {
-                                                
-                                                console.log(data);
-                                                //点击的线
-                                                var entity = viewer.entities.getById(data.id);
-                                                if (entity == undefined) {
-                                                    var points = data.pointList;
-                                                    points.push(points[0]);
-                                                    viewer.entities.add({
-                                                        id: data.id,
-                                                        polyline: {
-                                                            positions: points,
-                                                            width: 1,
-                                                            //arcType: Cesium.ArcType.RHUMB,
-                                                            material: Cesium.Color.YELLOW,
-                                                            depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
-                                                                color: Cesium.Color.YELLOW
-                                                            })
-                                                            //show: true,
-                                                            //clampToGround: true,
-                                                            //classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
-                                                        },
-                                                    });
-                                                        
-                                                //data.checked = true;
-
-                                                    //viewer.entities.add({
-                                                    //    id: data.id,
-                                                    //    polygon: {
-                                                    //        hierarchy: {
-                                                    //            positions: points
-                                                    //        },
-                                                    //        material: Cesium.Color.YELLOW.withAlpha(0.3),
-                                                    //        classificationType: Cesium.ClassificationType.CESIUM_3D_TILE,
-                                                    //    }
-                                                    //});
-
-                                                    //计算面积
-                                                    //var cartesian2s = [];
-                                                    //for (var i = 0; i < newcartesian3s.length; i++) {
-                                                    //    var cartesian3 = Cesium.Cartesian3.fromDegrees(newcartesian3s[i].y, newcartesian3s[i].x, maxHeight);
-                                                    //    var cartesian2 = new Cesium.Cartesian2(cartesian3.x, cartesian3.y);
-                                                    //    cartesian2s.push(cartesian2);
-                                                    //}
-                                                    //cartesian2s.push(cartesian2s[0]);
-                                                    //var area = 0;
-                                                    //for (var i = 0; i < cartesian2s.length - 1; i++) {
-                                                    //    area += (cartesian2s[i].x - cartesian2s[0].x) * (cartesian2s[i + 1].y - cartesian2s[0].y) - (cartesian2s[i].y - cartesian2s[0].y) * (cartesian2s[i + 1].x - cartesian2s[0].x);
-                                                    //}
-                                                    //area = Math.abs(area);
-
-                                                    //计算重心
-                                                    //viewer.entities.add({
-                                                    //    id: data.id + "_LABEL",
-                                                    //    position: Cesium.Cartesian3.fromDegrees(lSum / points.length, bSum / points.length, maxHeight + 1),
-                                                    //    label: {
-                                                    //        text: data.title + '面积：' + area.toFixed(2) + '平方米',
-                                                    //        showBackground: true,
-                                                    //        backgroundColor: new Cesium.Color(0.165, 0.165, 0.165, 0.5),
-                                                    //        font: '24px Times New Roman',
-                                                    //        horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-                                                    //        verticalOrigin: Cesium.VerticalOrigin.CENTER,
-                                                    //        pixelOffset: new Cesium.Cartesian2(0.0, -10),
-                                                    //    }
-                                                    //});
-                                                  
-
-                                                }
-
-                                                data.checked = true;
-                                            }
-                                        }
-
-                                    }
-                                    else {
-                                        if (data.children != undefined) {
-                                            for (var i in data.children) {
-                                                viewer.entities.removeById(data.children[i].id);
-                                                viewer.entities.removeById(data.children[i].id + "_LABEL");
-                                                data.children[i].checked = false;
-                                            }
-                                            if (data.type == "FLZWINDOW") {//特殊情况测传
-                                                viewer.entities.removeById(data.id);
-                                                viewer.entities.removeById(data.id + "_LABEL");
-                                            }
-                                            data.checked = false;
-                                        }
-                                        else {
-                                            if (data.type == "PROJECTSUMODEL" || data.type == "DISASTERSURMODEL") {
-                                                console.log(modleInfo);
-                                                if (modleInfo.id == data.id) {
-                                                    viewer.scene.primitives.remove(curtileset);
-                                                    curtileset = null;
-                                                    modleInfo = null;
-                                                }
-                                                
-                                            }
-                                            else {
-                                                viewer.entities.removeById(data.id);
-                                                viewer.entities.removeById(data.id + "_LABEL");
-                                            }
-
-                                            data.checked = false;
-                                        }
-
-                                    }
-
-                                }
-                               
-                                , operate: function (obj) {
-                                    var type = obj.type; //得到操作类型：add、edit、del
-                                    var data = obj.data; //得到当前节点的数据
-                                    var elem = obj.elem; //得到当前节点元素
-
-                                    var id = data.id;
-                                    var name = data.title;
-                                    console.log(obj);
-                                    if (type === 'add') { //增加节点，查看
-                                        DrwInfo(obj, "view");
-                                        return;
-                                    } else if (type === 'update') { //修改节点
-                                        DrwInfo(obj, "update");
-                                    } else if (type === 'del') { //删除节点
-                                        if (data.type == "FLZWINDOW") {//删除测窗
-                                            $.ajax({
-                                                url: servicesurl + "/api/FlzWindowInfo/DeleteFlzWindow", type: "delete", data: { "id": obj.data.id.split("_")[1], "cookie": document.cookie },
-                                                success: function (result) {
-                                                    layer.msg(result, { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
-
-
-                                                    viewer.entities.removeById(obj.data.id);
-                                                    viewer.entities.removeById(obj.data.id + "_LABEL");
-                                                    for (var i in layers[0].children) {
-                                                        if (obj.data.id == layers[0].children[i].id) {
-                                                            layers[0].children.splice(i, 1);
-                                                            break;
-                                                        }
-
-                                                    }
-                                                    tree.reload('prjlayerlistid', { data: layers });
-                                                    for (var m in windowInfoList) {
-                                                        if (("FLZWINDOW_" + windowInfoList[m].id) == obj.data.id) {
-                                                            windowInfoList.splice(m, 1);
-                                                        }
-                                                    }
-
-
-                                                }, datatype: "json"
-                                            });
-                                        } else if (data.type == "BIANJIE") {//删除边界范围
-                                            var temp = {};
-                                            temp.id = currentprojectid;
-                                            temp.cookie = document.cookie;
-                                            temp.flzRange = null;
-                                            var loadinglayerindex = layer.load(0, { shade: false, zIndex: layer.zIndex, success: function (loadlayero) { layer.setTop(loadlayero); } });
-
-                                            $.ajax({
-                                                url: servicesurl + "/api/FLZ/UpdateProject", type: "put", data: temp,
-                                                success: function (result) {
-                                                    layer.close(loadinglayerindex);
-                                                    if (result == "更新成功！") {
-                                                        layer.msg("删除成功", { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
-                                                        //关闭
-                                                        //刷新项目列表
-                                                        //GetUserProjects();
-                                                        //var flzWindowLayer = new Object;
-                                                        //flzWindowLayer.title = "边界范围";
-                                                        //flzWindowLayer.type = "BIANJIE";
-                                                        //flzWindowLayer.id = "BIANJIE" + currentprojectid;
-                                                        //flzWindowLayer.pointList = points;
-                                                        //flzWindowLayer.checked = true;
-                                                        //flzWindowLayer.showCheckbox = true;//显示复选框
-                                                        //flzWindowLayer.children = [];
-                                                        //layers.push(flzWindowLayer);
-                                                        //console.log(layers);
-                                                        //tree.reload('prjlayerlistid', { data: layers });
-                                                        //if (handler != undefined) {
-                                                        //    handler.destroy();
-                                                        //}
-                                                        //isRedo = true;
-                                                        //ClearTemp();
-                                                       // tree.reload('prjlayerlistid', { data: layers });
-                                                        for (var i in layers ) {
-                                                            if (layers[i].type == "BIANJIE") {
-                                                                layers.splice(i, 1);
-                                                                break;
-                                                            }
-                                                        }
-                                                        console.log(layers);
-                                                        viewer.entities.removeById(data.id);
-                                                        tree.reload('prjlayerlistid', { data: layers });
                                                     } else {
-                                                        layer.msg(result, { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+                                                        var entities = [];
+                                                        for (var i in data.children) {
+                                                            var entity = viewer.entities.getById(data.children[i].id)
+                                                            if (entity != undefined) {
+                                                                entities.push(entity);
+                                                            }
+                                                        }
+
+                                                        if (entities.length > 0) {
+                                                            viewer.zoomTo(entities, new Cesium.HeadingPitchRange(Cesium.Math.toRadians(300), Cesium.Math.toRadians(-120), 50));
+                                                        }
                                                     }
-                                                }, datatype: "json"
-                                            });
-                                        } else {
-                                            $.ajax({
-                                                url: servicesurl + "/api/FlzData/DeleteFlzPoint", type: "delete", data: { "id": obj.data.id.split("_")[1], "cookie": document.cookie },
-                                                success: function (result) {
-                                                    layer.msg(result, { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
-                                                    viewer.entities.removeById(obj.data.id);
-                                                    viewer.entities.removeById(obj.data.id + "_LABEL");
-                                                    console.log(layers);
-                                                    if (data.type == "FLZJIELI" || data.type == "YOUSHIMIAN") {
+
+                                                }
+                                                else {
+                                                    console.log(data);
+                                                    //  viewer.flyTo(viewer.entities.getById(data.id), { duration: 1, offset: new Cesium.HeadingPitchRange(Cesium.Math.toRadians(0), Cesium.Math.toRadians(-90), 50) });
+                                                    // viewer.zoomTo(viewer.entities.getById(data.id));//
+                                                    if (data.type == "FLZJIELI") {// || data.type == "YOUSHIMIAN"
+                                                        //viewer.zoomTo(viewer.entities.getById(data.id + "_LABEL"));
+                                                        console.log(data);//测窗的
                                                         for (var i in layers[0].children) {
                                                             for (var j in layers[0].children[i].children) {
-                                                                if (obj.data.id == layers[0].children[i].children[j].id) {
-                                                                    layers[0].children[i].children.splice(j, 1);
+                                                                if (data.id == layers[0].children[i].children[j].id) {
+                                                                    console.log(layers[0].children[i]);
+                                                                    viewer.zoomTo(viewer.entities.getById(data.id + "_LABEL"), new Cesium.HeadingPitchRange(Cesium.Math.toRadians(-(parseFloat(layers[0].children[i].datas.level))), Cesium.Math.toRadians(layers[0].children[i].datas.vertical), 20));
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+
+
+                                                    } else if (data.type == "YOUSHIMIAN") {// || data.type == "YOUSHIMIAN"
+                                                        //viewer.zoomTo(viewer.entities.getById(data.id + "_LABEL"));
+                                                        console.log(data);
+                                                        viewer.zoomTo(viewer.entities.getById(data.id + "_LABEL"), new Cesium.HeadingPitchRange(Cesium.Math.toRadians(data.datas.inclination - 180), Cesium.Math.toRadians(data.datas.dipAngle - 90), 40));
+                                                    } else if (data.type == "PROJECTSUMODEL") {// || data.type == "YOUSHIMIAN"
+                                                        if (curtileset != null) {
+                                                            //viewer.zoomTo(curtileset);
+                                                            viewer.zoomTo(curtileset, new Cesium.HeadingPitchRange(Cesium.Math.toRadians(0), Cesium.Math.toRadians(-90), 0));
+                                                        }
+
+                                                    } else {
+                                                        viewer.zoomTo(viewer.entities.getById(data.id))
+                                                    }
+
+                                                }
+                                            }
+
+                                        }
+                                        , oncheck: function (obj) {
+                                            //根据选中状态在地图中添加元素
+                                            var checked = obj.checked;
+                                            var data = obj.data;
+
+                                            //TODO解决模型多选
+
+
+                                            if (checked) {
+                                                if (data.children != undefined) {
+                                                    //多选
+                                                    if (data.type == "FLZPOINT") {
+                                                        //全选监测点
+                                                        for (var i in data.children) {
+                                                            var entity = viewer.entities.getById(data.children[i].id);
+                                                            if (entity == undefined) {
+                                                                //当无此元素添加
+                                                                viewer.entities.add({
+                                                                    id: data.children[i].id,
+                                                                    position: data.children[i].postion,
+                                                                    billboard: {
+                                                                        image: '../../Resources/img/map/marker.png',
+                                                                        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                                                                        width: 24,
+                                                                        height: 24,
+                                                                    }
+                                                                });
+                                                            }
+
+                                                            var entitylabel = viewer.entities.getById(data.children[i].id + "_LABEL");
+                                                            if (entitylabel == undefined) {
+                                                                viewer.entities.add({
+                                                                    id: data.children[i].id + "_LABEL",
+                                                                    position: data.children[i].postion,
+                                                                    label: {
+                                                                        text: data.children[i].title,
+                                                                        font: '16px Times New Roman',
+                                                                        horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                                        verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                                        pixelOffset: new Cesium.Cartesian2(0.0, -36),
+                                                                    }
+                                                                });
+                                                            }
+
+                                                            data.children[i].checked = true;
+                                                        }
+                                                    }
+                                                    else if (data.type == "FLZLINE") {
+                                                        //全选线
+                                                        for (var i in data.children) {
+                                                            var entity = viewer.entities.getById(data.children[i].id);
+                                                            if (entity == undefined) {
+                                                                var line = data.children[i].pointList;
+                                                                var sum = 0;
+
+                                                                for (var x = 0; x < line.length - 1; x++) {
+                                                                    var point1 = line[x];
+                                                                    var point2 = line[x + 1];
+
+                                                                    var distance = Cesium.Cartesian3.distance(point1, point2)
+                                                                    if (distance == NaN) {
+                                                                        sum = 0;
+                                                                        break;
+                                                                    }
+                                                                    else {
+                                                                        sum += distance;
+                                                                    }
+                                                                }
+                                                                viewer.entities.add({
+                                                                    id: data.children[i].id,
+                                                                    polyline: {
+                                                                        positions: line,
+                                                                        width: 3,
+                                                                        material: Cesium.Color.YELLOW,
+                                                                        depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                            color: Cesium.Color.YELLOW
+                                                                        })
+                                                                    }
+                                                                });
+
+                                                                viewer.entities.add({
+                                                                    id: data.children[i].id + "_LABEL",
+                                                                    position: line[0],
+                                                                    label: {
+                                                                        text: data.children[i].title + '-长度：' + sum.toFixed(2) + '米',
+                                                                        font: '20px Times New Roman',
+                                                                        material: Cesium.Color.YELLOW,
+                                                                        depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                            color: Cesium.Color.YELLOW
+                                                                        }),
+                                                                        horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                                        verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                                        pixelOffset: new Cesium.Cartesian2(0.0, -60),
+                                                                    }
+
+                                                                });
+
+                                                            }
+
+                                                            data.children[i].checked = true;
+                                                        }
+                                                    } else if (data.type == "FLZWINDOW") {
+                                                        //全选侧窗
+                                                        console.log(data);
+                                                        var entityFater = viewer.entities.getById(data.id);
+                                                        var sum = 0;
+
+                                                        if (entityFater == undefined) {
+                                                            var points = data.pointList;
+                                                            points.push(points[0]);
+                                                            viewer.entities.add({
+                                                                id: data.id,
+                                                                polyline: {
+                                                                    positions: points,
+                                                                    width: 0.5,
+                                                                    arcType: Cesium.ArcType.RHUMB,
+                                                                    material: Cesium.Color.BLUE,
+                                                                    depthFailMaterial: Cesium.Color.BLUE,
+                                                                    show: true,
+                                                                    // classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                },
+                                                            });
+                                                            viewer.entities.add({
+                                                                id: data.id + "_LABEL",
+                                                                position: new Cesium.Cartesian3(data.Centerx, data.Centery, data.Centerz),
+                                                                point: {
+                                                                    pixelSize: 1,
+                                                                    color: Cesium.Color.BLUE
+                                                                }
+                                                            });
+
+                                                        }
+                                                        for (var i in data.children) {
+
+                                                            var entity = viewer.entities.getById(data.children[i].id);
+                                                            if (entity == undefined) {
+                                                                //viewer.entities.add({
+                                                                //    id: data.children[i].id,
+                                                                //    polygon: {
+                                                                //        hierarchy: {
+                                                                //            positions: data.children[i].pointList
+                                                                //        },
+                                                                //        material: Cesium.Color.RED.withAlpha(0.8),
+                                                                //        classificationType: Cesium.ClassificationType.CESIUM_3D_TILE,
+                                                                //    }
+                                                                //});
+                                                                var points = data.children[i].pointList;
+                                                                points.push(points[0]);
+                                                                viewer.entities.add({
+                                                                    id: data.children[i].id,
+                                                                    polyline: {
+                                                                        positions: points,
+                                                                        width: 1,
+                                                                        //arcType: Cesium.ArcType.RHUMB,
+                                                                        material: Cesium.Color.RED,
+                                                                        depthFailMaterial: Cesium.Color.RED,
+                                                                        show: true,
+                                                                        //clampToGround: true,
+                                                                    },
+                                                                });
+                                                                console.log(data.children[i]);
+                                                                viewer.entities.add({
+                                                                    id: data.children[i].id + "_LABEL",
+                                                                    position: new Cesium.Cartesian3(data.children[i].Centerx, data.children[i].Centery, data.children[i].Centerz),
+                                                                    point: {
+                                                                        pixelSize: 1,
+                                                                        color: Cesium.Color.RED.withAlpha(0.1)
+                                                                    }
+                                                                });
+                                                            }
+
+                                                            data.children[i].checked = true;
+                                                        }
+                                                        data.checked = true;
+                                                    } else if (data.type == "FLZAREA") {
+
+
+                                                        console.log(data);
+                                                        //点击的线
+                                                        //全选监测剖面
+                                                        for (var i in data.children) {
+                                                            var entity = viewer.entities.getById(data.children[i].id);
+                                                            if (entity == undefined) {
+                                                                var points = data.children[i].pointList;
+                                                                points.push(points[0]);
+                                                                viewer.entities.add({
+                                                                    id: data.children[i].id,
+                                                                    polyline: {
+                                                                        positions: points,
+                                                                        width: 3,
+                                                                        //arcType: Cesium.ArcType.RHUMB,
+                                                                        material: Cesium.Color.YELLOW,
+
+                                                                        depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                            color: Cesium.Color.YELLOW
+                                                                        }),
+                                                                        //show: true,
+                                                                        //clampToGround: true,
+                                                                        //classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                    },
+                                                                });
+                                                            }
+
+                                                            data.children[i].checked = true;
+                                                        }
+                                                    } else if (data.type == "DOMSTRPLA") {//优势结构面
+
+
+                                                        console.log(data);
+                                                        //点击的线
+                                                        //全选优势结构面
+                                                        for (var i in data.children) {
+                                                            var entity = viewer.entities.getById(data.children[i].id);
+                                                            if (entity == undefined) {
+
+                                                                viewer.entities.add({
+                                                                    id: data.children[i].id,
+                                                                    polygon: {
+                                                                        hierarchy: {
+                                                                            positions: data.children[i].pointList
+                                                                        },
+                                                                        classificationType: Cesium.ClassificationType.CESIUM_3D_TILE,
+                                                                        material: Cesium.Color.ORANGE.withAlpha(0.3),
+
+                                                                        //depthFailMaterial: Cesium.Color.ORANGE.withAlpha(0.3),
+                                                                    }
+                                                                });
+                                                                viewer.entities.add({
+                                                                    id: data.children[i].id + "_LABEL",
+                                                                    position: new Cesium.Cartesian3(data.children[i].Centerx, data.children[i].Centery, data.children[i].Centerz),
+                                                                    point: {
+                                                                        pixelSize: 1,
+                                                                        color: Cesium.Color.ORANGE
+                                                                    }
+                                                                });
+                                                            }
+                                                            data.children[i].checked = true;
+                                                        }
+                                                    } else if (data.type == "SECTION") {//全选的剖面单元
+
+
+                                                        console.log(data);
+                                                        //点击的线
+                                                        //全选优势结构面
+                                                        for (var i in data.children) {
+                                                            var entity = viewer.entities.getById(data.children[i].id);
+                                                            if (entity == undefined) {
+
+                                                                if (data.children[i].type == "PROFILE") {//剖面的线
+                                                                //点击的线
+                                                                console.log(data);
+                                                                var sum = 0;
+                                                                var entity = viewer.entities.getById(data.children[i].id);
+
+                                                                if (entity == undefined) {
+                                                                    viewer.entities.add({
+                                                                        id: data.children[i].id,
+                                                                        wall: {
+                                                                            positions: Cesium.Cartesian3.fromDegreesArrayHeights([
+                                                                                data.children[i].data.startPoint.L,
+                                                                                data.children[i].data.startPoint.B,
+                                                                                180,
+                                                                                data.children[i].data.endPoint.L,
+                                                                                data.children[i].data.endPoint.B,
+                                                                                180,
+                                                                            ]),
+                                                                            minimumHeights: [100, 100],
+                                                                            material: Cesium.Color.YELLOW.withAlpha(0.3),//
+                                                                        },
+                                                                    });
+                                                                    viewer.entities.add({
+                                                                        id: data.children[i].id + "_LABEL",
+                                                                        position: Cesium.Cartesian3.fromDegrees(data.children[i].data.startPoint.L, data.children[i].data.startPoint.B, 180),
+                                                                        label: {
+                                                                            text: data.children[i].title,
+                                                                            font: '16px Times New Roman',
+                                                                            showBackground: true,
+                                                                            backgroundColor: new Cesium.Color(0.165, 0.165, 0.165, 0.5),
+                                                                            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                                            verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                                            pixelOffset: new Cesium.Cartesian2(0.0, -60),
+                                                                            disableDepthTestDistance: Number.POSITIVE_INFINITY
+                                                                        }
+                                                                    });
+
+
+                                                                }
+
+                                                                    data.children[i].checked = true;
+                                                                } else if (data.children[i].type == "MENSURE") {//测窗 
+                                                                    //点击测窗
+                                                                    console.log(data);
+                                                                    var entity = viewer.entities.getById(data.children[i].id);
+                                                                    var pointsList = data.children[i].data.position;
+
+                                                                    if (pointsList[0].H > 0) {//这是修改了的测窗
+                                                                        //修改后就改成直连线。
+                                                                        if (entity == undefined) {
+
+                                                                            var pointList = [];
+                                                                            for (var m in pointsList) {
+                                                                                pointList.push(new Cesium.Cartesian3.fromDegrees(pointsList[m].L, pointsList[m].B, pointsList[m].H));
+                                                                            }
+                                                                            console.log(pointList);
+                                                                            viewer.entities.add({
+                                                                                id: data.children[i].id,
+                                                                                polyline: {
+                                                                                    positions: pointList,
+                                                                                    width: 1,
+                                                                                    material: Cesium.Color.RED,
+                                                                                    //depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                                    //    color: Cesium.Color.fromCssColorString('#09f654')
+                                                                                    //}),
+                                                                                    show: true,
+                                                                                    clampToGround: true,
+                                                                                    classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                                }
+                                                                            });
+
+                                                                        }
+
+                                                                        data.children[i].checked = true;
+                                                                    } else {
+                                                                        if (entity == undefined) {
+                                                                            var pointList = [];
+                                                                            for (var m in pointsList) {
+                                                                                pointList.push(new Cesium.Cartesian3.fromDegrees(pointsList[m].L, pointsList[m].B, pointsList[m].H));
+                                                                            }
+                                                                            console.log(pointList);
+                                                                            viewer.entities.add({
+                                                                                id: data.children[i].id,
+                                                                                polyline: {
+                                                                                    positions: pointList,
+                                                                                    width: 1,
+                                                                                    material: Cesium.Color.RED,
+                                                                                    //depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                                    //    color: Cesium.Color.fromCssColorString('#09f654')
+                                                                                    //}),
+                                                                                    show: true,
+                                                                                    clampToGround: true,
+                                                                                    classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                                }
+                                                                            });
+
+                                                                        }
+
+                                                                        data.children[i].checked = true;
+                                                                    }
+
+
+
+
+                                                                } else if (data.children[i].type == "PROBESLOT") {//探槽
+                                                                    //点击测窗
+                                                                    console.log(data);
+                                                                    var entity = viewer.entities.getById(data.children[i].id);
+                                                                    var pointsList = data.children[i].data.position;
+                                                                    if (pointsList[0].H > 0) {//修改后，重新存
+
+                                                                    } else {//未修改前贴膜线
+                                                                        if (entity == undefined) {
+
+                                                                            var pointList = [];
+                                                                            for (var m in pointsList) {
+                                                                                pointList.push(new Cesium.Cartesian3.fromDegrees(pointsList[m].L, pointsList[m].B, pointsList[m].H));
+                                                                            }
+
+                                                                            viewer.entities.add({
+                                                                                id: data.children[i].id,
+                                                                                polyline: {
+                                                                                    positions: pointList,
+                                                                                    width: 1,
+                                                                                    material: Cesium.Color.fromCssColorString('#09f4f7'),
+                                                                                    show: true,
+                                                                                    clampToGround: true,
+                                                                                    classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                                }
+                                                                            });
+
+                                                                        }
+
+                                                                        data.children[i].checked = true;
+                                                                    }
+
+
+
+                                                                } else if (data.children[i].type == "DRILLHOLE") {//钻孔
+                                                                    console.log(data);
+                                                                    var entity = viewer.entities.getById(data.children[i].id);
+                                                                    if (entity == undefined) {
+                                                                        //当无此元素添加 (new Cesium.Cartesian3.fromDegrees(pointsList[i].L, pointsList[i].B, pointsList.H)
+                                                                        if (data.children[i].data.position.H > 0) {
+                                                                            viewer.entities.add({
+                                                                                id: data.children[i].id,
+                                                                                position: new Cesium.Cartesian3.fromDegrees(data.children[i].data.position.L, data.children[i].data.position.B, data.children[i].data.position.H),
+                                                                                billboard: {
+                                                                                    image: '../../Resources/img/map/marker.png',
+                                                                                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                                                                                    width: 24,
+                                                                                    height: 24,
+                                                                                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
+
+                                                                                }
+                                                                            });
+                                                                            var entitylabel = viewer.entities.getById(data.children[i].id + "_LABEL");
+                                                                            if (entitylabel == undefined) {
+                                                                                viewer.entities.add({
+                                                                                    id: data.children[i].id + "_LABEL",
+                                                                                    position: data.children[i].data.position,
+                                                                                    label: {
+                                                                                        text: data.children[i].title,
+                                                                                        font: '16px Times New Roman',
+                                                                                        showBackground: true,
+                                                                                        backgroundColor: new Cesium.Color(0.165, 0.165, 0.165, 0.5),
+                                                                                        horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                                                        verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                                                        pixelOffset: new Cesium.Cartesian2(0.0, -60),
+                                                                                        disableDepthTestDistance: Number.POSITIVE_INFINITY
+                                                                                    }
+                                                                                });
+                                                                            }
+                                                                        } else {
+                                                                            var postions = new Cesium.Cartographic(Math.PI / 180 * data.children[i].data.position.L, Math.PI / 180 * data.children[i].data.position.B);
+                                                                            var Heights = viewer.scene.sampleHeight(postions);
+                                                                            console.log(Heights);
+                                                                            viewer.entities.add({
+                                                                                id: data.children[i].id,
+                                                                                position: new Cesium.Cartesian3.fromDegrees(data.children[i].data.position.L, data.children[i].data.position.B, Heights),
+                                                                                billboard: {
+                                                                                    image: '../../Resources/img/map/marker.png',
+                                                                                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                                                                                    width: 24,
+                                                                                    height: 24,
+                                                                                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
+
+                                                                                }
+                                                                            });
+                                                                        }
+
+                                                                    }
+
+
+
+                                                                    data.children[i].checked = true;
+                                                                }
+                                                            }
+                                                            data.children[i].checked = true;
+                                                        }
+                                                    } else if (data.type == "DESIGN") {//全选的设计数据
+
+
+                                                        console.log(data);
+                                                        //点击的线
+                                                        //全选优势结构面
+                                                        for (var i in data.children) {
+                                                            for (var j in data.children[i].children) {
+                                                                var entity = viewer.entities.getById(data.children[i].children[j].id);
+                                                                if (entity == undefined) {
+                                                                    if (data.children[i].children[j].type == "PROFILE") {//剖面的线
+                                                                        //点击的线
+                                                                        console.log(data);
+                                                                        var sum = 0;
+                                                                        var entity = viewer.entities.getById(data.children[i].children[j].id);
+
+                                                                        if (entity == undefined) {
+                                                                            viewer.entities.add({
+                                                                                id: data.children[i].children[j].id,
+                                                                                wall: {
+                                                                                    positions: Cesium.Cartesian3.fromDegreesArrayHeights([
+                                                                                        data.children[i].children[j].data.startPoint.L,
+                                                                                        data.children[i].children[j].data.startPoint.B,
+                                                                                        180,
+                                                                                        data.children[i].children[j].data.endPoint.L,
+                                                                                        data.children[i].children[j].data.endPoint.B,
+                                                                                        180,
+                                                                                    ]),
+                                                                                    minimumHeights: [100, 100],
+                                                                                    material: Cesium.Color.YELLOW.withAlpha(0.3),//
+                                                                                },
+                                                                            });
+                                                                            viewer.entities.add({
+                                                                                id: data.children[i].children[j].id + "_LABEL",
+                                                                                position: Cesium.Cartesian3.fromDegrees(data.children[i].children[j].data.startPoint.L, data.children[i].children[j].data.startPoint.B, 180),
+                                                                                label: {
+                                                                                    text: data.children[i].children[j].title,
+                                                                                    font: '16px Times New Roman',
+                                                                                    showBackground: true,
+                                                                                    backgroundColor: new Cesium.Color(0.165, 0.165, 0.165, 0.5),
+                                                                                    horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                                                    verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                                                    pixelOffset: new Cesium.Cartesian2(0.0, -60),
+                                                                                    disableDepthTestDistance: Number.POSITIVE_INFINITY
+                                                                                }
+                                                                            });
+
+
+                                                                        }
+
+                                                                        data.children[i].children[j].checked = true;
+                                                                    } else if (data.children[i].children[j].type == "MENSURE") {//测窗 
+                                                                        //点击测窗
+                                                                        console.log(data);
+                                                                        var entity = viewer.entities.getById(data.children[i].children[j].id);
+                                                                        var pointsList = data.children[i].children[j].data.position;
+
+                                                                        if (pointsList[0].H > 0) {//这是修改了的测窗
+                                                                            //修改后就改成直连线。
+                                                                            if (entity == undefined) {
+
+                                                                                var pointList = [];
+                                                                                for (var m in pointsList) {
+                                                                                    pointList.push(new Cesium.Cartesian3.fromDegrees(pointsList[m].L, pointsList[m].B, pointsList[m].H));
+                                                                                }
+                                                                                console.log(pointList);
+                                                                                viewer.entities.add({
+                                                                                    id: data.children[i].children[j].id,
+                                                                                    polyline: {
+                                                                                        positions: pointList,
+                                                                                        width: 1,
+                                                                                        material: Cesium.Color.RED,
+                                                                                        //depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                                        //    color: Cesium.Color.fromCssColorString('#09f654')
+                                                                                        //}),
+                                                                                        show: true,
+                                                                                        clampToGround: true,
+                                                                                        classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                                    }
+                                                                                });
+
+                                                                            }
+
+                                                                            data.children[i].children[j].checked = true;
+                                                                        } else {
+                                                                            if (entity == undefined) {
+                                                                                var pointList = [];
+                                                                                for (var m in pointsList) {
+                                                                                    pointList.push(new Cesium.Cartesian3.fromDegrees(pointsList[m].L, pointsList[m].B, pointsList[m].H));
+                                                                                }
+                                                                                console.log(pointList);
+                                                                                viewer.entities.add({
+                                                                                    id: data.children[i].children[j].id,
+                                                                                    polyline: {
+                                                                                        positions: pointList,
+                                                                                        width: 1,
+                                                                                        material: Cesium.Color.RED,
+                                                                                        //depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                                        //    color: Cesium.Color.fromCssColorString('#09f654')
+                                                                                        //}),
+                                                                                        show: true,
+                                                                                        clampToGround: true,
+                                                                                        classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                                    }
+                                                                                });
+
+                                                                            }
+
+                                                                            data.children[i].children[j].checked = true;
+                                                                        }
+
+
+
+
+                                                                    } else if (data.children[i].children[j].type == "PROBESLOT") {//探槽
+                                                                        //点击测窗
+                                                                        console.log(data);
+                                                                        var entity = viewer.entities.getById(data.children[i].children[j].id);
+                                                                        var pointsList = data.children[i].children[j].data.position;
+                                                                        if (pointsList[0].H > 0) {//修改后，重新存
+
+                                                                        } else {//未修改前贴膜线
+                                                                            if (entity == undefined) {
+
+                                                                                var pointList = [];
+                                                                                for (var m in pointsList) {
+                                                                                    pointList.push(new Cesium.Cartesian3.fromDegrees(pointsList[m].L, pointsList[m].B, pointsList[m].H));
+                                                                                }
+
+                                                                                viewer.entities.add({
+                                                                                    id: data.children[i].children[j].id,
+                                                                                    polyline: {
+                                                                                        positions: pointList,
+                                                                                        width: 1,
+                                                                                        material: Cesium.Color.fromCssColorString('#09f4f7'),
+                                                                                        show: true,
+                                                                                        clampToGround: true,
+                                                                                        classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                                    }
+                                                                                });
+
+                                                                            }
+
+                                                                            data.children[i].children[j].checked = true;
+                                                                        }
+
+
+
+                                                                    } else if (data.children[i].children[j].type == "DRILLHOLE") {//钻孔
+                                                                        console.log(data);
+                                                                        var entity = viewer.entities.getById(data.children[i].children[j].id);
+                                                                        if (entity == undefined) {
+                                                                            //当无此元素添加 (new Cesium.Cartesian3.fromDegrees(pointsList[i].L, pointsList[i].B, pointsList.H)
+                                                                            if (data.children[i].children[j].data.position.H > 0) {
+                                                                                viewer.entities.add({
+                                                                                    id: data.children[i].children[j].id,
+                                                                                    position: new Cesium.Cartesian3.fromDegrees(data.children[i].children[j].data.position.L, data.children[i].children[j].data.position.B, data.children[i].children[j].data.position.H),
+                                                                                    billboard: {
+                                                                                        image: '../../Resources/img/map/marker.png',
+                                                                                        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                                                                                        width: 24,
+                                                                                        height: 24,
+                                                                                        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+
+                                                                                    }
+                                                                                });
+                                                                                var entitylabel = viewer.entities.getById(data.children[i].children[j].id + "_LABEL");
+                                                                                if (entitylabel == undefined) {
+                                                                                    viewer.entities.add({
+                                                                                        id: data.children[i].children[j].id + "_LABEL",
+                                                                                        position: data.children[i].children[j].data.position,
+                                                                                        label: {
+                                                                                            text: data.children[i].children[j].title,
+                                                                                            font: '16px Times New Roman',
+                                                                                            showBackground: true,
+                                                                                            backgroundColor: new Cesium.Color(0.165, 0.165, 0.165, 0.5),
+                                                                                            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                                                            verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                                                            pixelOffset: new Cesium.Cartesian2(0.0, -60),
+                                                                                            disableDepthTestDistance: Number.POSITIVE_INFINITY
+                                                                                        }
+                                                                                    });
+                                                                                }
+                                                                            } else {
+                                                                                var postions = new Cesium.Cartographic(Math.PI / 180 * data.children[i].children[j].data.position.L, Math.PI / 180 * data.children[i].children[j].data.position.B);
+                                                                                var Heights = viewer.scene.sampleHeight(postions);
+                                                                                console.log(Heights);
+                                                                                viewer.entities.add({
+                                                                                    id: data.children[i].children[j].id,
+                                                                                    position: new Cesium.Cartesian3.fromDegrees(data.children[i].children[j].data.position.L, data.children[i].children[j].data.position.B, Heights),
+                                                                                    billboard: {
+                                                                                        image: '../../Resources/img/map/marker.png',
+                                                                                        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                                                                                        width: 24,
+                                                                                        height: 24,
+                                                                                        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+
+                                                                                    }
+                                                                                });
+                                                                            }
+
+                                                                        }
+                                                                        data.children[i].children[j].checked = true;
+                                                                    }
+
+                                                                  
+                                                                }
+
+                                                            }
+                                                            data.children[i].checked = true;
+                                                        }
+                                                    }
+
+
+                                                    data.checked = true;
+                                                }
+                                                else {
+                                                    //单选
+                                                    if (data.type == "PROJECTCENTER") {
+                                                        //项目位置
+                                                        console.log(curtileset);
+                                                        console.log(data);
+                                                        var entity = viewer.entities.getById(data.id);
+                                                        if (entity == undefined) {
+                                                            viewer.entities.add({
+                                                                id: data.id,
+                                                                position: Cesium.Cartesian3.fromDegrees(data.bl.L, data.bl.B),
+                                                                billboard: {
+                                                                    image: '../../Resources/img/map/marker.png',
+                                                                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                                                                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                                                                    width: 24,
+                                                                    height: 24,
+                                                                }
+                                                            });
+                                                        }
+
+                                                        var entitylabel = viewer.entities.getById(data.id + "_LABEL");
+                                                        if (entitylabel == undefined) {
+                                                            viewer.entities.add({
+                                                                id: data.id + "_LABEL",
+                                                                position: Cesium.Cartesian3.fromDegrees(data.bl.L, data.bl.B),
+                                                                label: {
+                                                                    text: data.label,
+                                                                    font: '24px Times New Roman',
+                                                                    horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                                    verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                                                                    pixelOffset: new Cesium.Cartesian2(0.0, -60),
+                                                                }
+                                                            });
+                                                        }
+
+                                                        data.checked = true;
+                                                    }
+                                                    else if (data.type == "PROJECTSUMODEL") {
+
+                                                        for (var i in layers) {
+                                                            if (layers[i].title == "三维实景模型") {
+                                                                for (var j in layers[i].children) {
+                                                                    if (data.id != layers[i].children[j].id) {
+                                                                        layers[i].children[j].checked = false;
+                                                                    } else {
+                                                                        layers[i].children[j].checked = true;
+                                                                        layers[i].children[j].spread = true;
+                                                                        layers[i].spread = true;
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+
+
+                                                        if (modleInfo != null && data.id != modleInfo.id) {
+
+                                                            modleInfo = data;
+                                                            console.log(viewer);
+                                                            console.log(viewer.entities);
+                                                            tree.reload('prjlayerlistid', { data: layers });
+                                                        }
+                                                        modleInfo = data;
+
+
+                                                        //项目模型
+                                                        var loadingceindex = layer.load(0, { shade: 0.2, zIndex: layer.zIndex, success: function (loadlayero) { layer.setTop(loadlayero); } });
+
+                                                        if (modeljiazaiFlag) {
+                                                            LoadModel(data);
+                                                        }
+
+
+                                                        layer.close(loadingceindex);
+
+                                                    }
+                                                    else if (data.type == "FLZJIELI") {
+                                                        //节理
+                                                        var entity = viewer.entities.getById(data.id);
+                                                        if (entity == undefined) {
+                                                            var points = data.pointList;
+                                                            points.push(points[0]);
+                                                            viewer.entities.add({
+                                                                id: data.id,
+                                                                polyline: {
+                                                                    positions: points,
+                                                                    width: 1,
+                                                                    arcType: Cesium.ArcType.RHUMB,
+                                                                    material: Cesium.Color.RED,
+                                                                    depthFailMaterial: Cesium.Color.RED,
+                                                                    show: true,
+                                                                    //clampToGround: true,
+                                                                    //classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                },
+                                                            });
+
+                                                            viewer.entities.add({
+                                                                id: data.id + "_LABEL",
+                                                                position: new Cesium.Cartesian3(data.Centerx, data.Centery, data.Centerz),
+                                                                point: {
+                                                                    pixelSize: 1,
+                                                                    color: Cesium.Color.RED.withAlpha(0.1)
+                                                                }
+                                                            });
+                                                        }
+                                                        data.checked = true;
+                                                        //看看把父亲也选中
+                                                        for (var i in layers[0].children) {
+                                                            for (var j in layers[0].children[i].children) {
+                                                                if (data.id == layers[0].children[i].children[j].id) {
+                                                                    var entityFater = viewer.entities.getById(layers[0].children[i].id);
+                                                                    if (entityFater == undefined) {
+                                                                        var points = layers[0].children[i].pointList;
+
+                                                                        points.push(points[0]);
+                                                                        viewer.entities.add({
+                                                                            id: layers[0].children[i].id,
+                                                                            polyline: {
+                                                                                positions: points,
+                                                                                width: 0.5,
+                                                                                arcType: Cesium.ArcType.RHUMB,
+                                                                                material: Cesium.Color.BLUE,
+                                                                                depthFailMaterial: Cesium.Color.BLUE,
+                                                                                show: true,
+                                                                            },
+                                                                        });
+                                                                        viewer.entities.add({
+                                                                            id: layers[0].children[i].id + "_LABEL",
+                                                                            position: new Cesium.Cartesian3(layers[0].children[i].Centerx, layers[0].children[i].Centery, layers[0].children[i].Centerz),
+                                                                            point: {
+                                                                                pixelSize: 1,
+                                                                                color: Cesium.Color.BLUE
+                                                                            }
+                                                                        });
+                                                                        layers[0].children[i].checked = true;
+                                                                    }
+
 
                                                                     break;
                                                                 }
                                                             }
                                                         }
-                                                    }  else{//点数据成图
-                                                        for (var i in layers[layers.length-1].children) {
-                                                            for (var j in layers[layers.length - 1].children[i].children) {
-                                                                if (obj.data.id == layers[layers.length - 1].children[i].children[j].id) {
-                                                                    layers[layers.length - 1].children[i].children.splice(j,1);
+                                                    } else if (data.type == "YOUSHIMIAN") {
+                                                        //优势结构面
+                                                        var entity = viewer.entities.getById(data.id);
+                                                        if (entity == undefined) {
+                                                            var points = data.pointList;
+                                                            var sum = 0;
+
+                                                            viewer.entities.add({
+                                                                id: data.id,
+                                                                polygon: {
+                                                                    hierarchy: {
+                                                                        positions: points
+                                                                    },
+                                                                    material: Cesium.Color.ORANGE.withAlpha(0.5),
+                                                                    //   depthFailMaterial: Cesium.Color.ORANGE.withAlpha(0.3),
+                                                                    classificationType: Cesium.ClassificationType.CESIUM_3D_TILE,
+                                                                }
+                                                            });
+
+                                                            viewer.entities.add({
+                                                                id: data.id + "_LABEL",
+                                                                position: new Cesium.Cartesian3(data.Centerx, data.Centery, data.Centerz),
+                                                                point: {
+                                                                    pixelSize: 1,
+                                                                    color: Cesium.Color.ORANGE
+                                                                }
+                                                            });
+                                                        }
+                                                        data.checked = true;
+                                                        //看看把父亲也选中
+                                                    }
+                                                    else if (data.type == "BIANJIE") {
+                                                        //消落带边界
+                                                        console.log(data);
+                                                        var entityFater = viewer.entities.getById(data.id);
+                                                        var sum = 0;
+
+                                                        if (entityFater == undefined) {
+                                                            var points = data.pointList;
+                                                            points.push(points[0]);
+                                                            viewer.entities.add({
+                                                                id: data.id,
+                                                                polyline: {
+                                                                    positions: points,
+                                                                    width: 3,
+                                                                    //arcType: Cesium.ArcType.RHUMB,
+                                                                    material: Cesium.Color.YELLOW,
+                                                                    depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                        color: Cesium.Color.YELLOW
+                                                                    }),
+                                                                    show: true,
+                                                                    //clampToGround: true,
+                                                                    classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                },
+                                                            });
+
+
+                                                        }
+                                                        data.checked = true;
+                                                    }
+                                                    else if (data.type == "FLZPOINT") {
+                                                        //监测点
+                                                        var entity = viewer.entities.getById(data.id);
+                                                        if (entity == undefined) {
+                                                            //当无此元素添加
+                                                            viewer.entities.add({
+                                                                id: data.id,
+                                                                position: data.postion,//new Cesium.Cartesian3.fromDegrees(data.lbh.ls, data.lbh.bs, data.lbh.hs),
+                                                                billboard: {
+                                                                    image: '../../Resources/img/map/marker.png',
+                                                                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                                                                    width: 24,
+                                                                    height: 24,
+                                                                }
+                                                            });
+                                                        }
+
+                                                        var entitylabel = viewer.entities.getById(data.id + "_LABEL");
+                                                        if (entitylabel == undefined) {
+                                                            viewer.entities.add({
+                                                                id: data.id + "_LABEL",
+                                                                position: data.postion,
+                                                                label: {
+                                                                    text: data.title,
+                                                                    font: '16px Times New Roman',
+                                                                    horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                                    verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                                    pixelOffset: new Cesium.Cartesian2(0.0, -36),
+                                                                }
+                                                            });
+                                                        }
+
+                                                        data.checked = true;
+                                                    }
+                                                    else if (data.type == "FLZLINE") {
+                                                        //点击的线
+                                                        console.log(data);
+                                                        var sum = 0;
+                                                        var entity = viewer.entities.getById(data.id);
+                                                        if (entity == undefined) {
+                                                            var line = data.pointList;
+                                                            for (var i = 0; i < line.length - 1; i++) {
+                                                                var point1 = line[i];
+                                                                var point2 = line[i + 1];
+
+                                                                var distance = Cesium.Cartesian3.distance(point1, point2)
+                                                                if (distance == NaN) {
+                                                                    sum = 0;
                                                                     break;
                                                                 }
+                                                                else {
+                                                                    sum += distance;
+                                                                }
+                                                            }
+
+
+                                                            var points = data.pointList;
+                                                            viewer.entities.add({
+                                                                id: data.id,
+                                                                polyline: {
+                                                                    positions: points,
+                                                                    width: 1,
+                                                                    //arcType: Cesium.ArcType.RHUMB,
+                                                                    material: Cesium.Color.YELLOW,
+                                                                    depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                        color: Cesium.Color.YELLOW
+                                                                    }),//深度检测失败，用什么显示
+                                                                    //show: true,
+                                                                    //clampToGround: true,
+                                                                    //classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                },
+                                                            });
+
+                                                            viewer.entities.add({
+                                                                id: data.id + "_LABEL",
+                                                                position: points[0],
+                                                                label: {
+                                                                    text: data.title + '-长度：' + sum.toFixed(2) + '米',
+                                                                    font: '20px Times New Roman',
+                                                                    horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                                    verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                                    pixelOffset: new Cesium.Cartesian2(0.0, -60),
+                                                                }
+                                                            });
+
+
+                                                        }
+
+                                                        data.checked = true;
+                                                    } else if (data.type == "FLZAREA") {
+
+                                                        console.log(data);
+                                                        //点击的线
+                                                        var entity = viewer.entities.getById(data.id);
+                                                        if (entity == undefined) {
+                                                            var points = data.pointList;
+                                                            points.push(points[0]);
+                                                            viewer.entities.add({
+                                                                id: data.id,
+                                                                polyline: {
+                                                                    positions: points,
+                                                                    width: 1,
+                                                                    //arcType: Cesium.ArcType.RHUMB,
+                                                                    material: Cesium.Color.YELLOW,
+                                                                    depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                        color: Cesium.Color.YELLOW
+                                                                    })
+                                                                    //show: true,
+                                                                    //clampToGround: true,
+                                                                    //classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                },
+                                                            });
+
+                                                            //data.checked = true;
+
+                                                            //viewer.entities.add({
+                                                            //    id: data.id,
+                                                            //    polygon: {
+                                                            //        hierarchy: {
+                                                            //            positions: points
+                                                            //        },
+                                                            //        material: Cesium.Color.YELLOW.withAlpha(0.3),
+                                                            //        classificationType: Cesium.ClassificationType.CESIUM_3D_TILE,
+                                                            //    }
+                                                            //});
+
+                                                            //计算面积
+                                                            //var cartesian2s = [];
+                                                            //for (var i = 0; i < newcartesian3s.length; i++) {
+                                                            //    var cartesian3 = Cesium.Cartesian3.fromDegrees(newcartesian3s[i].y, newcartesian3s[i].x, maxHeight);
+                                                            //    var cartesian2 = new Cesium.Cartesian2(cartesian3.x, cartesian3.y);
+                                                            //    cartesian2s.push(cartesian2);
+                                                            //}
+                                                            //cartesian2s.push(cartesian2s[0]);
+                                                            //var area = 0;
+                                                            //for (var i = 0; i < cartesian2s.length - 1; i++) {
+                                                            //    area += (cartesian2s[i].x - cartesian2s[0].x) * (cartesian2s[i + 1].y - cartesian2s[0].y) - (cartesian2s[i].y - cartesian2s[0].y) * (cartesian2s[i + 1].x - cartesian2s[0].x);
+                                                            //}
+                                                            //area = Math.abs(area);
+
+                                                            //计算重心
+                                                            //viewer.entities.add({
+                                                            //    id: data.id + "_LABEL",
+                                                            //    position: Cesium.Cartesian3.fromDegrees(lSum / points.length, bSum / points.length, maxHeight + 1),
+                                                            //    label: {
+                                                            //        text: data.title + '面积：' + area.toFixed(2) + '平方米',
+                                                            //        showBackground: true,
+                                                            //        backgroundColor: new Cesium.Color(0.165, 0.165, 0.165, 0.5),
+                                                            //        font: '24px Times New Roman',
+                                                            //        horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                            //        verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                            //        pixelOffset: new Cesium.Cartesian2(0.0, -10),
+                                                            //    }
+                                                            //});
+
+
+                                                        }
+
+                                                        data.checked = true;
+                                                    } else if (data.type == "PROFILE") {//剖面的线
+                                                        //点击的线
+                                                        console.log(data);
+                                                        var sum = 0;
+                                                        var entity = viewer.entities.getById(data.id);
+
+                                                        if (entity == undefined) {
+                                                            viewer.entities.add({
+                                                                id: data.id,
+                                                                wall: {
+                                                                    positions: Cesium.Cartesian3.fromDegreesArrayHeights([
+                                                                        data.data.startPoint.L,
+                                                                        data.data.startPoint.B,
+                                                                        180,
+                                                                        data.data.endPoint.L,
+                                                                        data.data.endPoint.B,
+                                                                        180,
+                                                                    ]),
+                                                                    minimumHeights: [100, 100],
+                                                                    material: Cesium.Color.YELLOW.withAlpha(0.3),//
+                                                                },
+                                                            });
+                                                            viewer.entities.add({
+                                                                id: data.id + "_LABEL",
+                                                                position: Cesium.Cartesian3.fromDegrees(data.data.startPoint.L, data.data.startPoint.B, 180),
+                                                                label: {
+                                                                    text: data.title,
+                                                                    font: '16px Times New Roman',
+                                                                    showBackground: true,
+                                                                    backgroundColor: new Cesium.Color(0.165, 0.165, 0.165, 0.5),
+                                                                    horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                                    verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                                    pixelOffset: new Cesium.Cartesian2(0.0, -60),
+                                                                    disableDepthTestDistance: Number.POSITIVE_INFINITY
+                                                                }
+                                                            });
+
+
+                                                        }
+
+                                                        data.checked = true;
+                                                    } else if (data.type == "MENSURE") {//测窗 
+                                                        //点击测窗
+                                                        console.log(data);
+                                                        var entity = viewer.entities.getById(data.id);
+                                                        var pointsList = data.data.position;
+                                                        //    if (modleInfo == null) {
+                                                        //        layer.msg('请先选择模型');
+                                                        //        return;
+                                                        //}
+                                                        //for (var i in pointsList) {
+                                                        //    var postions = new Cesium.Cartographic(Math.PI / 180 * pointsList[i].L, Math.PI / 180 * pointsList[i].B);
+                                                        //    var Heights = viewer.scene.sampleHeight(postions);
+                                                        //    if (Heights < 0) {
+                                                        //        layer.msg('选择的测窗与模型不匹配或者测窗的点在模型外面了');
+                                                        //        return;
+                                                        //    }
+
+                                                        //}
+                                                        if (pointsList[0].H > 0) {//这是修改了的测窗
+                                                            //修改后就改成直连线。
+                                                            if (entity == undefined) {
+                                                                // var points = data.pointList;
+                                                                var pointList = [];
+                                                                for (var m in pointsList) {
+                                                                    pointList.push(new Cesium.Cartesian3.fromDegrees(pointsList[m].L, pointsList[m].B, pointsList[m].H));
+                                                                }
+                                                                console.log(pointList);
+                                                                viewer.entities.add({
+                                                                    id: data.id,
+                                                                    polyline: {
+                                                                        positions: pointList,
+                                                                        width: 1,
+                                                                        material: Cesium.Color.RED,
+                                                                        //depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                        //    color: Cesium.Color.fromCssColorString('#09f654')
+                                                                        //}),
+                                                                        show: true,
+                                                                        clampToGround: true,
+                                                                        classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                    }
+                                                                });
+
+                                                                //viewer.entities.add({
+                                                                //    id: data.id + "_LABEL",
+                                                                //    position: pointList[0],
+                                                                //    label: {
+                                                                //        text: data.title,
+                                                                //        font: '16px Times New Roman',
+                                                                //        showBackground: true,
+                                                                //        backgroundColor: new Cesium.Color(0.165, 0.165, 0.165, 0.5),
+                                                                //        horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                                //        verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                                //        pixelOffset: new Cesium.Cartesian2(0.0, -60),
+                                                                //        disableDepthTestDistance: Number.POSITIVE_INFINITY
+                                                                //    }
+                                                                //});
+
+
+                                                            }
+
+                                                            data.checked = true;
+                                                        } else {
+                                                            if (entity == undefined) {
+                                                                // var points = data.pointList;
+                                                                var pointList = [];
+                                                                for (var i in pointsList) {
+                                                                    pointList.push(new Cesium.Cartesian3.fromDegrees(pointsList[i].L, pointsList[i].B, pointsList[i].H));
+                                                                }
+                                                                console.log(pointList);
+                                                                viewer.entities.add({
+                                                                    id: data.id,
+                                                                    polyline: {
+                                                                        positions: pointList,
+                                                                        width: 1,
+                                                                        material: Cesium.Color.RED,
+                                                                        //depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                        //    color: Cesium.Color.fromCssColorString('#09f654')
+                                                                        //}),
+                                                                        show: true,
+                                                                        clampToGround: true,
+                                                                        classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                    }
+                                                                });
+
+                                                                //viewer.entities.add({
+                                                                //    id: data.id + "_LABEL",
+                                                                //    position: pointList[0],
+                                                                //    label: {
+                                                                //        text: data.title,
+                                                                //        font: '16px Times New Roman',
+                                                                //        showBackground: true,
+                                                                //        backgroundColor: new Cesium.Color(0.165, 0.165, 0.165, 0.5),
+                                                                //        horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                                //        verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                                //        pixelOffset: new Cesium.Cartesian2(0.0, -60),
+                                                                //        disableDepthTestDistance: Number.POSITIVE_INFINITY
+                                                                //    }
+                                                                //});
+
+
+                                                            }
+
+                                                            data.checked = true;
+                                                            //var sendDate = {};
+
+
+                                                            //var tempdata = data.data;
+                                                            //tempdata.position = pointsList;
+                                                            //var listTemp = data.list;
+                                                            //for (var j in listTemp) {
+                                                            //    if (listTemp[j].code == tempdata.code) {//等于
+                                                            //        listTemp.splice(j, 1);
+                                                            //    }
+                                                            //}
+                                                            //listTemp.push(tempdata);
+                                                            //sendDate.measurWindowPostion = JSON.stringify(listTemp);
+
+                                                            //sendDate.id = data.lineId;
+                                                            //sendDate.cookie = document.cookie;
+                                                            //var loadingceindex = layer.load(0, {
+                                                            //    shade: 0.2,
+                                                            //    zIndex: layer.zIndex,
+                                                            //    success: function (loadlayero) { layer.setTop(loadlayero); }
+                                                            //});
+
+                                                            //$.ajax({
+                                                            //    url: servicesurl + "/api/RockDesign/UpdateRockDesignPoint", type: "post", data: sendDate,
+                                                            //    success: function (result) {
+                                                            //        layer.close(loadingceindex);
+
+                                                            //        if ("更新成功" == result) {
+                                                            //            for (var i in layers) {
+                                                            //                if (layers[i].type == "DESIGN") {
+                                                            //                    for (var j in layers[i].children) {
+                                                            //                        for (var z in layers[i].children[j].children) {
+                                                            //                            if (layers[i].children[j].children[z].id == data.id) {
+                                                            //                                layers[i].children[j].children[z].data.position = pointsList;
+                                                            //                                layers[i].spread = true;
+                                                            //                                layers[i].children[j].spread = true;
+                                                            //                                layers[i].children[j].children[z].spread = true;
+                                                            //                                layers[i].children[j].children[z].checked = true;
+                                                            //                            }
+                                                            //                        }
+                                                            //                    }
+                                                            //                }
+                                                            //            }
+                                                            //            viewer.entities.removeById(data.id);
+                                                            //            viewer.entities.removeById(data.id + "_LABEL");
+                                                            //            modeljiazaiFlag = false;
+                                                            //            tree.reload('prjlayerlistid', { data: layers });
+                                                            //            //关闭,更改图上显示
+                                                            //            //if (data.data.checked) {
+                                                            //            //    var entity = viewer.entities.getById(data.data.id + "_LABEL");
+                                                            //            //    console.log(entity);
+                                                            //            //    entity.label.text = entity.label.text._value.replace(temptitle, temp.field.name);
+                                                            //            //}
+                                                            //            ClearTemp();
+                                                            //            layer.close(drwInfox);
+                                                            //        } else {
+                                                            //            //创建失败
+                                                            //            layer.msg(result, { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+
+                                                            //        }
+
+                                                            //    }, datatype: "json"
+                                                            //});
+                                                        }
+
+
+
+
+                                                    } else if (data.type == "PROBESLOT") {//探槽
+                                                        //点击测窗
+                                                        console.log(data);
+                                                        var entity = viewer.entities.getById(data.id);
+                                                        var pointsList = data.data.position;
+                                                        if (pointsList[0].H > 0) {//修改后，重新存
+
+                                                        } else {//未修改前贴膜线
+                                                            if (entity == undefined) {
+
+                                                                var pointList = [];
+                                                                for (var m in pointsList) {
+                                                                    pointList.push(new Cesium.Cartesian3.fromDegrees(pointsList[m].L, pointsList[m].B, pointsList[m].H));
+                                                                }
+                                                               
+                                                                viewer.entities.add({
+                                                                    id: data.id,
+                                                                    polyline: {
+                                                                        positions: pointList,
+                                                                        width: 1,
+                                                                        material: Cesium.Color.fromCssColorString('#09f4f7'),
+                                                                        show: true,
+                                                                        clampToGround: true,
+                                                                        classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                    }
+                                                                });
+
+                                                                // var points = data.pointList;
+                                                                //viewer.entities.add({
+                                                                //    id: data.id,
+                                                                //    polyline: {
+                                                                //        positions: points,
+                                                                //        width: 1,
+                                                                //        //arcType: Cesium.ArcType.RHUMB,
+                                                                //        material: Cesium.Color.fromCssColorString('#0ef6df'), //'#09f654'#0ef6df
+                                                                //        depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                //            color: Cesium.Color.fromCssColorString('#0ef6df')
+                                                                //        }),//深度检测失败，用什么显示
+
+                                                                //    },
+                                                                //});
+
+                                                                //viewer.entities.add({
+                                                                //    id: data.id + "_LABEL",
+                                                                //    position: new Cesium.Cartesian3(data.Centerx, data.Centery, data.Centerz),
+                                                                //    label: {
+                                                                //        text: data.title,
+                                                                //        font: '16px Times New Roman',
+                                                                //        showBackground: true,
+                                                                //        backgroundColor: new Cesium.Color(0.165, 0.165, 0.165, 0.5),
+                                                                //        horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                                //        verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                                //        pixelOffset: new Cesium.Cartesian2(0.0, -60),
+                                                                //        disableDepthTestDistance: Number.POSITIVE_INFINITY
+                                                                //    }
+                                                                //});
+
+
+                                                            }
+
+                                                            data.checked = true;
+                                                        }
+
+                                                        
+                                                        
+                                                    } else if (data.type == "DRILLHOLE") {//钻孔
+                                                        console.log(data);
+                                                        var entity = viewer.entities.getById(data.id);
+                                                        if (entity == undefined) {
+                                                            //当无此元素添加 (new Cesium.Cartesian3.fromDegrees(pointsList[i].L, pointsList[i].B, pointsList.H)
+                                                            if (data.data.position.H>0) {
+                                                                viewer.entities.add({
+                                                                    id: data.id,
+                                                                    position: new Cesium.Cartesian3.fromDegrees(data.data.position.L, data.data.position.B, data.data.position.H),
+                                                                    billboard: {
+                                                                        image: '../../Resources/img/map/marker.png',
+                                                                        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                                                                        width: 24,
+                                                                        height: 24,
+                                                                        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+
+                                                                    }
+                                                                });
+                                                                var entitylabel = viewer.entities.getById(data.id + "_LABEL");
+                                                                if (entitylabel == undefined) {
+                                                                    viewer.entities.add({
+                                                                        id: data.id + "_LABEL",
+                                                                        position: data.data.position,
+                                                                        label: {
+                                                                            text: data.title,
+                                                                            font: '16px Times New Roman',
+                                                                            showBackground: true,
+                                                                            backgroundColor: new Cesium.Color(0.165, 0.165, 0.165, 0.5),
+                                                                            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                                            verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                                            pixelOffset: new Cesium.Cartesian2(0.0, -60),
+                                                                            disableDepthTestDistance: Number.POSITIVE_INFINITY
+                                                                        }
+                                                                    });
+                                                                }
+                                                            } else {
+                                                                var postions = new Cesium.Cartographic(Math.PI / 180 * data.data.position.L, Math.PI / 180 * data.data.position.B);
+                                                                var Heights = viewer.scene.sampleHeight(postions);
+                                                                console.log(Heights);
+                                                                viewer.entities.add({
+                                                                    id: data.id,
+                                                                    position: new Cesium.Cartesian3.fromDegrees(data.data.position.L, data.data.position.B, Heights),
+                                                                    billboard: {
+                                                                        image: '../../Resources/img/map/marker.png',
+                                                                        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                                                                        width: 24,
+                                                                        height: 24,
+                                                                        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+
+                                                                    }
+                                                                });
+                                                            }
+                                                            
+                                                        }
+
+                                                        
+
+                                                        data.checked = true;
+                                                    }
+                                                }
+
+                                            }
+                                            else {
+                                                if (data.children != undefined) {
+                                                    for (var i in data.children) {
+                                                        viewer.entities.removeById(data.children[i].id);
+                                                        viewer.entities.removeById(data.children[i].id + "_LABEL");
+                                                        data.children[i].checked = false;
+                                                    }
+                                                    if (data.type == "FLZWINDOW") {//特殊情况测传
+                                                        viewer.entities.removeById(data.id);
+                                                        viewer.entities.removeById(data.id + "_LABEL");
+                                                    }
+                                                    if (data.type == "DESIGN") {//特殊情况，设计数据全部取消
+                                                        for (var i in data.children) {
+                                                            for (var j in data.children[i].children) {
+                                                                viewer.entities.removeById(data.children[i].children[j].id);
+                                                                viewer.entities.removeById(data.children[i].children[j].id + "_LABEL");
+                                                                data.children[i].children[j].checked = false;
                                                             }
                                                         }
                                                     }
-                                                    
-                                                    console.log(layers);
-                                                    tree.reload('prjlayerlistid', { data: layers });
-                                                }, datatype: "json"
-                                            });
+                                                    data.checked = false;
+                                                }
+                                                else {
+                                                    if (data.type == "PROJECTSUMODEL" || data.type == "DISASTERSURMODEL") {
+                                                        console.log(modleInfo);
+                                                        if (modleInfo.id == data.id) {
+                                                            viewer.scene.primitives.remove(curtileset);
+                                                            curtileset = null;
+                                                            modleInfo = null;
+                                                        }
+
+                                                    }
+                                                    else {
+                                                        viewer.entities.removeById(data.id);
+                                                        viewer.entities.removeById(data.id + "_LABEL");
+                                                    }
+
+                                                    data.checked = false;
+                                                }
+
+                                            }
+
                                         }
-                                        
 
-                                    };
+                                        , operate: function (obj) {
+                                            var type = obj.type; //得到操作类型：add、edit、del
+                                            var data = obj.data; //得到当前节点的数据
+                                            var elem = obj.elem; //得到当前节点元素
+
+                                            var id = data.id;
+                                            var name = data.title;
+                                            console.log(obj);
+                                            if (type === 'add') { //增加节点，查看
+                                                DrwInfo(obj, "view");
+                                                return;
+                                            } else if (type === 'update') { //修改节点
+                                                DrwInfo(obj, "update");
+                                            } else if (type === 'del') { //删除节点
+                                                if (data.type == "FLZWINDOW") {//删除测窗
+                                                    $.ajax({
+                                                        url: servicesurl + "/api/FlzWindowInfo/DeleteFlzWindow", type: "delete", data: { "id": obj.data.id.split("_")[1], "cookie": document.cookie },
+                                                        success: function (result) {
+                                                            layer.msg(result, { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+
+
+                                                            viewer.entities.removeById(obj.data.id);
+                                                            viewer.entities.removeById(obj.data.id + "_LABEL");
+                                                            for (var i in layers[0].children) {
+                                                                if (obj.data.id == layers[0].children[i].id) {
+                                                                    layers[0].children.splice(i, 1);
+                                                                    break;
+                                                                }
+
+                                                            }
+                                                            tree.reload('prjlayerlistid', { data: layers });
+                                                            for (var m in windowInfoList) {
+                                                                if (("FLZWINDOW_" + windowInfoList[m].id) == obj.data.id) {
+                                                                    windowInfoList.splice(m, 1);
+                                                                }
+                                                            }
+
+
+                                                        }, datatype: "json"
+                                                    });
+                                                } else if (data.type == "BIANJIE") {//删除边界范围
+                                                    var temp = {};
+                                                    temp.id = currentprojectid;
+                                                    temp.cookie = document.cookie;
+                                                    temp.flzRange = null;
+                                                    var loadinglayerindex = layer.load(0, { shade: false, zIndex: layer.zIndex, success: function (loadlayero) { layer.setTop(loadlayero); } });
+
+                                                    $.ajax({
+                                                        url: servicesurl + "/api/FLZ/UpdateProject", type: "put", data: temp,
+                                                        success: function (result) {
+                                                            layer.close(loadinglayerindex);
+                                                            if (result == "更新成功！") {
+                                                                layer.msg("删除成功", { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+                                                                //关闭
+                                                                //刷新项目列表
+                                                                //GetUserProjects();
+                                                                //var flzWindowLayer = new Object;
+                                                                //flzWindowLayer.title = "边界范围";
+                                                                //flzWindowLayer.type = "BIANJIE";
+                                                                //flzWindowLayer.id = "BIANJIE" + currentprojectid;
+                                                                //flzWindowLayer.pointList = points;
+                                                                //flzWindowLayer.checked = true;
+                                                                //flzWindowLayer.showCheckbox = true;//显示复选框
+                                                                //flzWindowLayer.children = [];
+                                                                //layers.push(flzWindowLayer);
+                                                                //console.log(layers);
+                                                                //tree.reload('prjlayerlistid', { data: layers });
+                                                                //if (handler != undefined) {
+                                                                //    handler.destroy();
+                                                                //}
+                                                                //isRedo = true;
+                                                                //ClearTemp();
+                                                                // tree.reload('prjlayerlistid', { data: layers });
+                                                                for (var i in layers) {
+                                                                    if (layers[i].type == "BIANJIE") {
+                                                                        layers.splice(i, 1);
+                                                                        break;
+                                                                    }
+                                                                }
+                                                                console.log(layers);
+                                                                viewer.entities.removeById(data.id);
+                                                                tree.reload('prjlayerlistid', { data: layers });
+                                                            } else {
+                                                                layer.msg(result, { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+                                                            }
+                                                        }, datatype: "json"
+                                                    });
+                                                } else {
+                                                    $.ajax({
+                                                        url: servicesurl + "/api/FlzData/DeleteFlzPoint", type: "delete", data: { "id": obj.data.id.split("_")[1], "cookie": document.cookie },
+                                                        success: function (result) {
+                                                            layer.msg(result, { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+                                                            viewer.entities.removeById(obj.data.id);
+                                                            viewer.entities.removeById(obj.data.id + "_LABEL");
+                                                            console.log(layers);
+                                                            if (data.type == "FLZJIELI" || data.type == "YOUSHIMIAN") {
+                                                                for (var i in layers[0].children) {
+                                                                    for (var j in layers[0].children[i].children) {
+                                                                        if (obj.data.id == layers[0].children[i].children[j].id) {
+                                                                            layers[0].children[i].children.splice(j, 1);
+
+                                                                            break;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            } else {//点数据成图
+                                                                for (var i in layers[layers.length - 1].children) {
+                                                                    for (var j in layers[layers.length - 1].children[i].children) {
+                                                                        if (obj.data.id == layers[layers.length - 1].children[i].children[j].id) {
+                                                                            layers[layers.length - 1].children[i].children.splice(j, 1);
+                                                                            break;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            console.log(layers);
+                                                            tree.reload('prjlayerlistid', { data: layers });
+                                                        }, datatype: "json"
+                                                    });
+                                                }
+
+
+                                            };
+                                        }
+                                    });
+
                                 }
-                            });
-
-                        }
+                            }, datatype: "json"
+                        });
 
                     }
 
                 }, datatype: "json"
             });
-
+        
        //}
 
     }

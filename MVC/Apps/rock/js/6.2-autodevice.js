@@ -40,6 +40,36 @@ function DrwInfo(data,flag) {
 
                 }
             });
+        } else if (data.data.type == "PROFILE" || data.data.type == "MENSURE" || data.data.type == "PROBESLOT" || data.data.type == "DRILLHOLE" ) {//查看剖面
+            drwInfox = layer.open({
+                type: 1
+                , title: ['信息查看', 'font-weight:bold;font-size:large;font-family:Microsoft YaHei']
+                , area: ['300px', '400px']
+                , shade: 0
+                , offset: 'auto'
+                , closeBtn: 1
+                , maxmin: true
+                , moveOut: true
+                , content: seeprofileform
+                , zIndex: layer.zIndex
+                , success: function (layero) {
+                    layer.setTop(layero);
+                 
+                    form.val("seeprofileform", {
+                        "name": data.data.title
+                        , "code": data.data.data.code
+                        , "type": data.data.data.type
+                        , "remark": data.data.remark
+                    });
+
+
+                    //展示项目设备总览
+
+                }
+                , end: function () {
+                    drwInfox = null;
+                }
+            });
         } else if (data.data.type == "ROCKLINE" || data.data.type == "ROCKAREA") {
             console.log(data);
             drwInfox = layer.open({
@@ -97,7 +127,7 @@ function DrwInfo(data,flag) {
                 type: 1
                 , title: ['确认修改', 'font-weight:bold;font-size:large;font-family:	Microsoft YaHei']
                 , area: ['300px', '300px']
-                , shade: 0.3
+                , shade: 0
                 , offset: 'auto'
                 , closeBtn: 1
                 , maxmin: true
@@ -162,9 +192,365 @@ function DrwInfo(data,flag) {
                 }
             });
 
+        } else if (data.data.type == "PROFILE") {//剖面
+            var temptitle = data.data.title;
+            drwInfox = layer.open({
+                type: 1
+                , title: ['剖面修改', 'font-weight:bold;font-size:large;font-family:	Microsoft YaHei']
+                , area: ['300px', '300px']
+                , shade: 0
+                ,offset: ['85px', '260px']
+                , closeBtn: 1
+                , maxmin: true
+                , moveOut: true
+       
+                , content: updateprofileform
+                , zIndex: layer.zIndex
+                , success: function (layero) {
+                    //置顶
+                    layer.setTop(layero);
+                    form.render();
+                    form.val("updprofileform", {
+                        "name": data.data.title
+                        , "code": data.data.data.code
+                        , "remark": data.data.remark
+                    });
+
+                    form.on('submit(updprofileinfosubmit)', function (temp) {
+                       
+                        //tree.reload(data.data.id, { data: data.data });
+                        // 重汇的剖面点 JSON.stringify(obj.data.title).replace(/\"/g, "") ;<p style="font-size:24px;font-weight:bold;text-align:center;">' + JSON.stringify(obj.data.title).replace(/\"/g, "") +'</p>
+                        if (temppoints.length > 0) {//重绘了剖面
+                            layer.confirm('<p style="font-size:16px">是否确定将' + data.data.title + '的剖面替换？</p><br/>',
+                                {
+                                    title: ['消息提示', 'font-weight:bold;font-size:large;font-family:Microsoft YaHei;background-color:#68bc80'],
+                                    area: ['400px', '250px'],
+                                    shade: 0.5,
+                                    shadeClose: true,
+                                    closeBtn: 0,
+                                    resize: false,
+                                    zIndex: layer.zIndex,
+                                    success: function (loadlayero) {
+                                        layer.setTop(loadlayero);
+                                    }
+                                }, function (index) {
+                                  
+                                    temp.field.cookie = document.cookie;
+                                    console.log(layers);
+                                    layer.close(index);
+                                    var sendDate = {};
+                                    sendDate.remark = temp.field.remark;
+                                    
+                                    var tempdata = data.data.data;
+                                    tempdata.code = temp.field.code;
+                                    tempdata.name = temp.field.name;
+                                    tempdata.startPoint = temppoints[0];
+                                    tempdata.endPoint = temppoints[1];
+                                    sendDate.profilePostion = JSON.stringify(tempdata);
+                                    sendDate.id = data.data.lineId;
+                                    sendDate.cookie = document.cookie;
+                                    var loadingceindex = layer.load(0, { shade: 0.2, zIndex: layer.zIndex, success: function (loadlayero) { layer.setTop(loadlayero); } });
+
+                                    $.ajax({
+                                        url: servicesurl + "/api/RockDesign/UpdateRockDesignPoint", type: "post", data: sendDate,
+                                        success: function (result) {
+                                            layer.close(loadingceindex);
+                                            
+                                            if ("更新成功" == result) {
+                                                for (var i in layers) {
+                                                    if (layers[i].type == "DESIGN") {
+                                                        for (var j in layers[i].children) {
+                                                            for (var z in layers[i].children[j].children) {
+                                                                if (layers[i].children[j].children[z].id==data.data.id) {
+                                                                    layers[i].children[j].children[z].remark = temp.field.remark;
+                                                                    layers[i].children[j].children[z].data.startPoint = temppoints[0];
+                                                                    layers[i].children[j].children[z].data.endPoint = temppoints[1];
+                                                                    layers[i].children[j].children[z].data.code = temp.field.code;
+                                                                    layers[i].children[j].children[z].data.name = temp.field.name;
+                                                                    layers[i].spread = true;
+                                                                    layers[i].children[j].spread = true;
+                                                                    layers[i].children[j].children[z].spread = true;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                viewer.entities.removeById(data.data.id);
+                                                viewer.entities.removeById(data.data.id + "_LABEL");
+                                                modeljiazaiFlag = false;
+                                                tree.reload('prjlayerlistid', { data: layers });
+                                                //关闭,更改图上显示
+                                                //if (data.data.checked) {
+                                                //    var entity = viewer.entities.getById(data.data.id + "_LABEL");
+                                                //    console.log(entity);
+                                                //    entity.label.text = entity.label.text._value.replace(temptitle, temp.field.name);
+                                                //}
+                                                var entity = viewer.entities.getById(data.id);
+                                                temppoints = [];
+                                                ClearTemp();
+                                                layer.close(drwInfox);
+                                            } else {
+                                                //创建失败
+                                                layer.msg(result, { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+
+                                            }
+
+                                        }, datatype: "json"
+                                    });
+                                });
+                        } else {//修改了要素
+                            //暂时未处理
+                        }
+                        
+                        
+
+                       
+                        return false;
+                    });
+
+                }
+                , end: function () {
+                    layer.close(drwInfox);
+                }
+            });
+
+        } else if (data.data.type == "DRILLHOLE") {//钻孔修改
+            var temptitle = data.data.title;
+            drwInfox = layer.open({
+                type: 1
+                , title: ['钻孔修改', 'font-weight:bold;font-size:large;font-family:	Microsoft YaHei']
+                , area: ['300px', '300px']
+                , shade: 0
+                , offset: ['85px', '260px']
+                , closeBtn: 1
+                , maxmin: true
+                , moveOut: true
+
+                , content: updatedrillHoleform
+                , zIndex: layer.zIndex
+                , success: function (layero) {
+                    //置顶
+                    layer.setTop(layero);
+                    form.render();
+                    form.val("upddrillHoleform", {
+                        "name": data.data.title
+                        , "code": data.data.data.code
+                        , "remark": data.data.remark
+                    });
+
+                    form.on('submit(upddrillHoleinfosubmit)', function (temp) {
+
+                        if (temppoints.length > 0) {//重绘了剖面
+                            layer.confirm('<p style="font-size:16px">是否确定将' + data.data.title + '的钻孔替换？</p><br/>',
+                                {
+                                    title: ['消息提示', 'font-weight:bold;font-size:large;font-family:Microsoft YaHei;background-color:#68bc80'],
+                                    area: ['300px', '200px'],
+                                    shade: 0.5,
+                                    shadeClose: true,
+                                    closeBtn: 0,
+                                    resize: false,
+                                    zIndex: layer.zIndex,
+                                    success: function (loadlayero) {
+                                        layer.setTop(loadlayero);
+                                    }
+                                }, function (index) {
+
+                                    temp.field.cookie = document.cookie;
+                                    console.log(layers);
+                                    layer.close(index);
+                                    var sendDate = {};
+                                    sendDate.remark = temp.field.remark;
+
+                                    var tempdata = data.data.data;
+                                    tempdata.code = temp.field.code;
+                                    tempdata.name = temp.field.name;
+                                    tempdata.position = temppoints[0];
+                                    sendDate.drillHolePostion = JSON.stringify(tempdata);
+                                    sendDate.id = data.data.pointId;
+                                    sendDate.cookie = document.cookie;
+                                    var loadingceindex = layer.load(0, { shade: 0.2, zIndex: layer.zIndex, success: function (loadlayero) { layer.setTop(loadlayero); } });
+
+                                    $.ajax({
+                                        url: servicesurl + "/api/RockDesign/UpdateRockDesignPoint", type: "post", data: sendDate,
+                                        success: function (result) {
+                                            layer.close(loadingceindex);
+
+                                            if ("更新成功" == result) {
+                                                for (var i in layers) {
+                                                    if (layers[i].type == "DESIGN") {
+                                                        for (var j in layers[i].children) {
+                                                            for (var z in layers[i].children[j].children) {
+                                                                if (layers[i].children[j].children[z].id == data.data.id) {
+                                                                    layers[i].children[j].children[z].remark = temp.field.remark;
+                                                                    layers[i].children[j].children[z].data.position = temppoints[0];
+                                                                    layers[i].children[j].children[z].data.code = temp.field.code;
+                                                                    layers[i].children[j].children[z].data.name = temp.field.name;
+                                                                    layers[i].spread = true;
+                                                                    layers[i].children[j].spread = true;
+                                                                    layers[i].children[j].children[z].spread = true;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                viewer.entities.removeById(data.data.id);
+                                                viewer.entities.removeById(data.data.id + "_LABEL");
+                                                modeljiazaiFlag = false;
+                                                tree.reload('prjlayerlistid', { data: layers });
+                                                //关闭,更改图上显示
+                                                //if (data.data.checked) {
+                                                //    var entity = viewer.entities.getById(data.data.id + "_LABEL");
+                                                //    entity.label.text = entity.label.text._value.replace(temptitle, temp.field.name);
+                                                //}
+                                                //var entity = viewer.entities.getById(data.id);
+                                                temppoints = [];
+                                                ClearTemp();
+                                                layer.close(drwInfox);
+                                            } else {
+                                                //创建失败
+                                                layer.msg(result, { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+
+                                            }
+
+                                        }, datatype: "json"
+                                    });
+                                });
+                        } else {//修改了要素
+                            //暂时未处理
+                        }
+
+
+
+
+                        return false;
+                    });
+
+                }
+                , end: function () {
+                    layer.close(drwInfox);
+                }
+            });
+
+        } else if (data.data.type == "MENSURE") {//测窗修改
+            var temptitle = data.data.title;
+            drwInfox = layer.open({
+                type: 1
+                , title: ['测窗修改', 'font-weight:bold;font-size:large;font-family:	Microsoft YaHei']
+                , area: ['300px', '300px']
+                , shade: 0
+                , offset: ['85px', '260px']
+                , closeBtn: 1
+                , maxmin: true
+                , moveOut: true
+
+                , content: updatemeasurWindowform
+                , zIndex: layer.zIndex
+                , success: function (layero) {
+                    //置顶
+                    layer.setTop(layero);
+                    form.render();
+                    form.val("updmeasurWindowform", {
+                        "name": data.data.title
+                        , "code": data.data.data.code
+                        , "remark": data.data.remark
+                    });
+
+                    form.on('submit(updmeasurWindowinfosubmit)', function (temp) {
+
+                        if (temppoints.length > 0) {//重绘了测窗
+                            layer.confirm('<p style="font-size:16px">是否确定将' + data.data.title + '的测窗替换？</p><br/>',
+                                {
+                                    title: ['消息提示', 'font-weight:bold;font-size:large;font-family:Microsoft YaHei;background-color:#68bc80'],
+                                    area: ['300px', '200px'],
+                                    shade: 0.5,
+                                    shadeClose: true,
+                                    closeBtn: 0,
+                                    resize: false,
+                                    zIndex: layer.zIndex,
+                                    success: function (loadlayero) {
+                                        layer.setTop(loadlayero);
+                                    }
+                                }, function (index) {
+
+                                    temp.field.cookie = document.cookie;
+                                    console.log(layers);
+                                    layer.close(index);
+                                    var sendDate = {};
+                                    sendDate.remark = temp.field.remark;
+
+                                    var tempdata = data.data.data;
+                                    tempdata.code = temp.field.code;
+                                    tempdata.name = temp.field.name;
+                                    tempdata.position = temppoints[0];
+                                    sendDate.measurWindowPostion = JSON.stringify(tempdata);
+                                    sendDate.id = data.data.pointId;
+                                    sendDate.cookie = document.cookie;
+                                    var loadingceindex = layer.load(0, { shade: 0.2, zIndex: layer.zIndex, success: function (loadlayero) { layer.setTop(loadlayero); } });
+
+                                    $.ajax({
+                                        url: servicesurl + "/api/RockDesign/UpdateRockDesignPoint", type: "post", data: sendDate,
+                                        success: function (result) {
+                                            layer.close(loadingceindex);
+
+                                            if ("更新成功" == result) {
+                                                for (var i in layers) {
+                                                    if (layers[i].type == "DESIGN") {
+                                                        for (var j in layers[i].children) {
+                                                            for (var z in layers[i].children[j].children) {
+                                                                if (layers[i].children[j].children[z].id == data.data.id) {
+                                                                    layers[i].children[j].children[z].remark = temp.field.remark;
+                                                                    layers[i].children[j].children[z].data.position = temppoints[0];
+                                                                    layers[i].children[j].children[z].data.code = temp.field.code;
+                                                                    layers[i].children[j].children[z].data.name = temp.field.name;
+                                                                    layers[i].spread = true;
+                                                                    layers[i].children[j].spread = true;
+                                                                    layers[i].children[j].children[z].spread = true;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                viewer.entities.removeById(data.data.id);
+                                                viewer.entities.removeById(data.data.id + "_LABEL");
+                                                modeljiazaiFlag = false;
+                                                tree.reload('prjlayerlistid', { data: layers });
+                                                //关闭,更改图上显示
+                                                //if (data.data.checked) {
+                                                //    var entity = viewer.entities.getById(data.data.id + "_LABEL");
+                                                //    entity.label.text = entity.label.text._value.replace(temptitle, temp.field.name);
+                                                //}
+                                                //var entity = viewer.entities.getById(data.id);
+                                                temppoints = [];
+                                                ClearTemp();
+                                                layer.close(drwInfox);
+                                            } else {
+                                                //创建失败
+                                                layer.msg(result, { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+
+                                            }
+
+                                        }, datatype: "json"
+                                    });
+                                });
+                        } else {//修改了要素
+                            //暂时未处理
+                        }
+
+
+
+
+                        return false;
+                    });
+
+                }
+                , end: function () {
+                    layer.close(drwInfox);
+                }
+            });
+
         } else {//最开始的点线面。
             var temptitle = data.data.title;
-            if (data.data.type == "ROCKPOINT" || data.data.type == "ROCKLINE") {//节理信息修改
+            if (data.data.type == "ROCKPOINT" || data.data.type == "ROCKLINE" || data.data.type == "ROCKAREA" ) {//节理信息修改
                 drwInfox = layer.open({
                     type: 1
                     , title: ['确认修改', 'font-weight:bold;font-size:large;font-family:	Microsoft YaHei']

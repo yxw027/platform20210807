@@ -218,5 +218,49 @@ namespace MODEL
                 return null;
             }
         }
+        /// <summary>
+        /// 侧窗信息
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static RockDesignData ParseRockDesignData(string data)
+        {
+            if (string.IsNullOrEmpty(data))
+            {
+                logger.Warn("解析rock_design_data数据为空！");
+                return null;
+            }
+
+            try
+            {
+                string[] rows = data.Split(new char[] { COM.ConstHelper.rowSplit });
+                if (rows.Length != 1)
+                {
+                    logger.Warn("设计值不唯一！");
+                    return null;
+                }
+
+                string[] row = rows[0].Split(new char[] { COM.ConstHelper.columnSplit });
+                RockDesignData rockDesignData = new RockDesignData()
+                {
+                    id = Convert.ToInt32(row[0].ToString()),
+                    projectId = Convert.ToInt32(row[1].ToString()),
+                    profilePostion = row[2].ToString(),
+                    measurWindowPostion = row[3].ToString(),
+                    drillHolePostion = row[4].ToString(),
+                    probeSlotPostion = row[5].ToString(),
+                    name = row[6].ToString(),
+                    remark = row[7].ToString(),
+                    lastModifiedPro = row[8].ToString(),
+                    lastModifiedTime = row[9].ToString(),
+                };
+                return rockDesignData;
+            }
+            catch (Exception ex)
+            {
+                logger.Error("Project解析失败：" + data, ex);
+                return null;
+            }
+        }
     }
 }

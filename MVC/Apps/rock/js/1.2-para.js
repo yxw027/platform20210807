@@ -93,6 +93,9 @@ $.ajax({
         }
     }, datatype: "json"
 });
+//获取用户信息
+
+
 
 layer.close(loadingceindex);
 

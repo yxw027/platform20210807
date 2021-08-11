@@ -160,6 +160,10 @@ function ClearTemp() {
     if (viewer.entities.getById("line_temp9998") != null) {
         viewer.entities.removeById("line_temp9998");
     }
+    //直接请求图层出来了
+    setTimeout(() => {
+        modeljiazaiFlag = true; //跳转地址图层列表
+    }, 2000);
     //if (viewer.scene.primitives._primitives.length>2)
     //{
     //    for (var i = 2; i < viewer.scene.primitives._primitives.length; i++) {
