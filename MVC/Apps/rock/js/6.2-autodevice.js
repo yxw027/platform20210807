@@ -238,17 +238,50 @@ function DrwInfo(data,flag) {
                                     temp.field.cookie = document.cookie;
                                     console.log(layers);
                                     layer.close(index);
+
+                                    var cartesian3 = Cesium.Cartographic.fromCartesian(temppoints[0]);                        //笛卡尔XYZ
+                                    var longitude = Cesium.Math.toDegrees(cartesian3.longitude);                         //经度
+                                    var latitude = Cesium.Math.toDegrees(cartesian3.latitude);                           //纬度
+                                    var height = cartesian3.height;                                                      //高度
+
+                                    var cartesian31 = Cesium.Cartographic.fromCartesian(temppoints[1]);                        //笛卡尔XYZ
+                                    var longitude1 = Cesium.Math.toDegrees(cartesian31.longitude);                         //经度
+                                    var latitude1 = Cesium.Math.toDegrees(cartesian31.latitude);                           //纬度
+                                    var height1 = cartesian31.height;                                                      //高度
+
+                                    var x = 0;
+                                    var y = 0;
+                                    var x1 =0;
+                                    var y1 = 0;
+                                    if (height > height1) {//第一点高，高出，反算出高点
+                                        x= (160 - height) / (height - height1) * (longitude - longitude1) + longitude; 
+                                        y = (160 - height) / (height - height1) * (latitude - latitude1) + latitude; 
+                                       
+
+
+                                        x1 = longitude1 - (height1 - 110) / (height - height1) * (longitude - longitude1) ;
+                                        y1 = latitude1 - (height1 - 110) / (height - height1) * (latitude - latitude1) ; 
+
+                                    } else {
+                                       x = (160 - height1) / (height1 - height) * (longitude1 - longitude) + longitude1;
+                                       y = (160 - height1) / (height1 - height) * (latitude1 - latitude) + latitude1;
+
+                                        x1 = longitude - (height - 110) / (height1 - height) * (longitude1 - longitude);
+                                        y1 = latitude - (height - 110) / (height1 - height) * (latitude1 - latitude); 
+                                   
+                                    }
+                                    
                                     var sendDate = {};
                                     sendDate.remark = temp.field.remark;
-                                    
                                     var tempdata = data.data.data;
                                     tempdata.code = temp.field.code;
                                     tempdata.name = temp.field.name;
-                                    tempdata.startPoint = temppoints[0];
-                                    tempdata.endPoint = temppoints[1];
+                                    tempdata.startPoint = { "B": y, "L": x, "H": 160 };
+                                    tempdata.endPoint = { "B": y1, "L": x1, "H": 110 };
                                     sendDate.profilePostion = JSON.stringify(tempdata);
                                     sendDate.id = data.data.lineId;
                                     sendDate.cookie = document.cookie;
+                                    console.log(sendDate);
                                     var loadingceindex = layer.load(0, { shade: 0.2, zIndex: layer.zIndex, success: function (loadlayero) { layer.setTop(loadlayero); } });
 
                                     $.ajax({
@@ -263,8 +296,8 @@ function DrwInfo(data,flag) {
                                                             for (var z in layers[i].children[j].children) {
                                                                 if (layers[i].children[j].children[z].id==data.data.id) {
                                                                     layers[i].children[j].children[z].remark = temp.field.remark;
-                                                                    layers[i].children[j].children[z].data.startPoint = temppoints[0];
-                                                                    layers[i].children[j].children[z].data.endPoint = temppoints[1];
+                                                                    layers[i].children[j].children[z].data.startPoint = { "B": y, "L": x, "H": 160 };
+                                                                    layers[i].children[j].children[z].data.endPoint = { "B": y1, "L": x1, "H": 110 };
                                                                     layers[i].children[j].children[z].data.code = temp.field.code;
                                                                     layers[i].children[j].children[z].data.name = temp.field.name;
                                                                     layers[i].spread = true;
@@ -285,7 +318,7 @@ function DrwInfo(data,flag) {
                                                 //    console.log(entity);
                                                 //    entity.label.text = entity.label.text._value.replace(temptitle, temp.field.name);
                                                 //}
-                                                var entity = viewer.entities.getById(data.id);
+                                               // var entity = viewer.entities.getById(data.id);
                                                 temppoints = [];
                                                 ClearTemp();
                                                 layer.close(drwInfox);
@@ -361,10 +394,15 @@ function DrwInfo(data,flag) {
                                     var sendDate = {};
                                     sendDate.remark = temp.field.remark;
 
+                                    var cartesian3 = Cesium.Cartographic.fromCartesian(temppoints[0]);                        //笛卡尔XYZ
+                                    var longitude = Cesium.Math.toDegrees(cartesian3.longitude);                         //经度
+                                    var latitude = Cesium.Math.toDegrees(cartesian3.latitude);                           //纬度
+                                    var height = cartesian3.height;                                                      //高度
+
                                     var tempdata = data.data.data;
                                     tempdata.code = temp.field.code;
                                     tempdata.name = temp.field.name;
-                                    tempdata.position = temppoints[0];
+                                    tempdata.position ={ "B": latitude, "L": longitude, "H": height };
                                     sendDate.drillHolePostion = JSON.stringify(tempdata);
                                     sendDate.id = data.data.pointId;
                                     sendDate.cookie = document.cookie;
@@ -382,7 +420,7 @@ function DrwInfo(data,flag) {
                                                             for (var z in layers[i].children[j].children) {
                                                                 if (layers[i].children[j].children[z].id == data.data.id) {
                                                                     layers[i].children[j].children[z].remark = temp.field.remark;
-                                                                    layers[i].children[j].children[z].data.position = temppoints[0];
+                                                                    layers[i].children[j].children[z].data.position = { "B": latitude, "L": longitude, "H": height };
                                                                     layers[i].children[j].children[z].data.code = temp.field.code;
                                                                     layers[i].children[j].children[z].data.name = temp.field.name;
                                                                     layers[i].spread = true;
@@ -472,20 +510,59 @@ function DrwInfo(data,flag) {
                                     }
                                 }, function (index) {
 
-                                    temp.field.cookie = document.cookie;
+                                  
+                                     //var sendDate = {};
+                                    //sendDate.remark = temp.field.remark;
+
+                                    //var tempdata = data.data.data;
+                                    //tempdata.code = temp.field.code;
+                                    //tempdata.name = temp.field.name;
+                                    //tempdata.position = temppoints[0];
+                                    //sendDate.measurWindowPostion = JSON.stringify(tempdata);
+                                    //sendDate.id = data.data.pointId;
+                                    //sendDate.cookie = document.cookie;
+                                    //var loadingceindex = layer.load(0, { shade: 0.2, zIndex: layer.zIndex, success: function (loadlayero) { layer.setTop(loadlayero); } });
+
+
                                     console.log(layers);
                                     layer.close(index);
-                                    var sendDate = {};
-                                    sendDate.remark = temp.field.remark;
 
+
+
+                                    var sendDate = {};
+
+
+                                   
+                                    var windouinfo = temppoints[0];
+                                    var pointList = windouinfo.Vertices3D1;
+                                    
                                     var tempdata = data.data.data;
+                                    tempdata.position = pointList;
                                     tempdata.code = temp.field.code;
                                     tempdata.name = temp.field.name;
-                                    tempdata.position = temppoints[0];
-                                    sendDate.measurWindowPostion = JSON.stringify(tempdata);
-                                    sendDate.id = data.data.pointId;
+                                    tempdata.wingdowinfo = windouinfo;
+
+                                    var listTemp = data.data.list;
+                                    for (var j in listTemp) {
+                                        if (listTemp[j].code == tempdata.code) {//等于
+                                            listTemp.splice(j, 1);
+                                        }
+                                    }
+                                    listTemp.push(tempdata);
+
+                                    sendDate.measurWindowPostion = JSON.stringify(listTemp);
+                                    sendDate.remark = temp.field.remark;
+                                    sendDate.id = data.data.lineId;
                                     sendDate.cookie = document.cookie;
-                                    var loadingceindex = layer.load(0, { shade: 0.2, zIndex: layer.zIndex, success: function (loadlayero) { layer.setTop(loadlayero); } });
+                                    console.log(sendDate);
+
+                                  
+
+                                    var loadingceindex = layer.load(0, {
+                                        shade: 0.2,
+                                        zIndex: layer.zIndex,
+                                        success: function (loadlayero) { layer.setTop(loadlayero); }
+                                    });
 
                                     $.ajax({
                                         url: servicesurl + "/api/RockDesign/UpdateRockDesignPoint", type: "post", data: sendDate,
@@ -498,13 +575,12 @@ function DrwInfo(data,flag) {
                                                         for (var j in layers[i].children) {
                                                             for (var z in layers[i].children[j].children) {
                                                                 if (layers[i].children[j].children[z].id == data.data.id) {
-                                                                    layers[i].children[j].children[z].remark = temp.field.remark;
-                                                                    layers[i].children[j].children[z].data.position = temppoints[0];
-                                                                    layers[i].children[j].children[z].data.code = temp.field.code;
-                                                                    layers[i].children[j].children[z].data.name = temp.field.name;
+                                                                    layers[i].children[j].children[z].data.position = pointList;
+                                                                    layers[i].children[j].children[z].list = listTemp;
                                                                     layers[i].spread = true;
                                                                     layers[i].children[j].spread = true;
                                                                     layers[i].children[j].children[z].spread = true;
+                                                                    layers[i].children[j].children[z].checked = true;
                                                                 }
                                                             }
                                                         }
@@ -517,9 +593,9 @@ function DrwInfo(data,flag) {
                                                 //关闭,更改图上显示
                                                 //if (data.data.checked) {
                                                 //    var entity = viewer.entities.getById(data.data.id + "_LABEL");
+                                                //    console.log(entity);
                                                 //    entity.label.text = entity.label.text._value.replace(temptitle, temp.field.name);
                                                 //}
-                                                //var entity = viewer.entities.getById(data.id);
                                                 temppoints = [];
                                                 ClearTemp();
                                                 layer.close(drwInfox);
@@ -531,6 +607,142 @@ function DrwInfo(data,flag) {
 
                                         }, datatype: "json"
                                     });
+
+
+                                    
+                                });
+                        } else {//修改了要素
+                            //暂时未处理
+                        }
+
+
+
+
+                        return false;
+                    });
+
+                }
+                , end: function () {
+                    layer.close(drwInfox);
+                }
+            });
+
+        } else if (data.data.type == "PROBESLOT") {//探槽修改
+            var temptitle = data.data.title;
+            drwInfox = layer.open({
+                type: 1
+                , title: ['探槽修改', 'font-weight:bold;font-size:large;font-family:	Microsoft YaHei']
+                , area: ['300px', '300px']
+                , shade: 0
+                , offset: ['85px', '260px']
+                , closeBtn: 1
+                , maxmin: true
+                , moveOut: true
+
+                , content: updateprobeSlotform
+                , zIndex: layer.zIndex
+                , success: function (layero) {
+                    //置顶
+                    layer.setTop(layero);
+                    form.render();
+                    form.val("updprobeSlotform", {
+                        "name": data.data.title
+                        , "code": data.data.data.code
+                        , "remark": data.data.remark
+                    });
+
+                    form.on('submit(updprobeSlotinfosubmit)', function (temp) {
+
+                        if (temppoints.length > 0) {//重绘了探槽
+                            layer.confirm('<p style="font-size:16px">是否确定将' + data.data.title + '的探槽替换？</p><br/>',
+                                {
+                                    title: ['消息提示', 'font-weight:bold;font-size:large;font-family:Microsoft YaHei;background-color:#68bc80'],
+                                    area: ['300px', '200px'],
+                                    shade: 0.5,
+                                    shadeClose: true,
+                                    closeBtn: 0,
+                                    resize: false,
+                                    zIndex: layer.zIndex,
+                                    success: function (loadlayero) {
+                                        layer.setTop(loadlayero);
+                                    }
+                                }, function (index) {
+
+
+
+                                    layer.close(index);
+
+
+
+                                    var sendDate = {};
+
+                                    var pointList = [];
+                                    for (var i in temppoints) {
+                                        var cartesian3 = Cesium.Cartographic.fromCartesian(temppoints[i]);                        //笛卡尔XYZ
+                                        var longitude = Cesium.Math.toDegrees(cartesian3.longitude);                         //经度
+                                        var latitude = Cesium.Math.toDegrees(cartesian3.latitude);                           //纬度
+                                        var height = cartesian3.height;                                                      //高度
+
+                                        pointList.push({ "B": latitude, "L": longitude, "H": height });
+
+                                    }
+
+                                    var tempdata = data.data.data;
+                                    tempdata.position = pointList;
+                                    tempdata.code = temp.field.code;
+                                    tempdata.name = temp.field.name;
+
+                                    sendDate.probeSlotPostion = JSON.stringify(tempdata);
+                                    sendDate.remark = temp.field.remark;
+                                    sendDate.id = data.data.lineId;
+                                    sendDate.cookie = document.cookie;
+                                    return;
+                                    var loadingceindex = layer.load(0, {
+                                        shade: 0.2,
+                                        zIndex: layer.zIndex,
+                                        success: function (loadlayero) { layer.setTop(loadlayero); }
+                                    });
+                                    
+                                    $.ajax({
+                                        url: servicesurl + "/api/RockDesign/UpdateRockDesignPoint", type: "post", data: sendDate,
+                                        success: function (result) {
+                                            layer.close(loadingceindex);
+
+                                            if ("更新成功" == result) {
+                                                for (var i in layers) {
+                                                    if (layers[i].type == "DESIGN") {
+                                                        for (var j in layers[i].children) {
+                                                            for (var z in layers[i].children[j].children) {
+                                                                if (layers[i].children[j].children[z].id == data.id) {
+                                                                    layers[i].children[j].children[z].data.position = pointsList;
+                                                                    layers[i].spread = true;
+                                                                    layers[i].children[j].spread = true;
+                                                                    layers[i].children[j].children[z].spread = true;
+                                                                    layers[i].children[j].children[z].checked = true;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                viewer.entities.removeById(data.id);
+                                                viewer.entities.removeById(data.id + "_LABEL");
+                                                modeljiazaiFlag = false;
+                                                tree.reload('prjlayerlistid', { data: layers });
+
+                                                temppoints = [];
+                                                ClearTemp();
+                                                layer.close(drwInfox);
+                                            } else {
+                                                //创建失败
+                                                layer.msg(result, { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+
+                                            }
+
+                                        }, datatype: "json"
+                                    });
+
+
+
                                 });
                         } else {//修改了要素
                             //暂时未处理

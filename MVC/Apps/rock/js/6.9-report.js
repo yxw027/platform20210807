@@ -21,6 +21,8 @@ function drowProfile() {
                 if (Cesium.defined(position)) {
 
                     temppoints.push(position);
+                    
+                    //temppoints.push({ "B": latitude, "L": longitude, "H": height});
 
                     viewer.entities.add({
                         name: "ptMeasue" + NewGuid(),
@@ -161,8 +163,6 @@ function drowmeasurWindow() {
         layer.msg('请先选择模型');
         return;
     }
-
-
     if (handler != undefined) {
         handler.destroy();
     }
@@ -177,9 +177,6 @@ function drowmeasurWindow() {
             var position = scene.pickPosition(leftclik.position);
             if (position != undefined) {
                 if (Cesium.defined(position)) {
-
-                    temppoints.push(position);
-
                     viewer.entities.add({
                         name: "ptMeasue" + NewGuid(),
                         position: position,
@@ -189,102 +186,58 @@ function drowmeasurWindow() {
                             disableDepthTestDistance: Number.POSITIVE_INFINITY
                         }
                     });
-                    var sideLength = 1.8;
+                    
+                    //var sideLength = 1.8;
                     var tempx = new Cesium.Cartesian2(leftclik.position.x + 1, leftclik.position.y);
                     var tempx1 = new Cesium.Cartesian2(leftclik.position.x, leftclik.position.y+1);
                     var tempy = new Cesium.Cartesian2(leftclik.position.x, leftclik.position.y);
-                    var tempy1 = new Cesium.Cartesian2(leftclik.position.x+1, leftclik.position.y+1);
-
-                    console.log(tempx);
-                    console.log(tempx1);
-                    console.log(tempy);
-                    console.log(tempy1);
-                    console.log(scene.pickPosition(tempx));
-                    console.log(scene.pickPosition(tempx1));
-                    console.log(scene.pickPosition(tempy));
-                    console.log(scene.pickPosition(tempy1));
-
-                    var bilici = Cesium.Cartesian3.distance(scene.pickPosition(tempy), scene.pickPosition(tempx));
+                  
+                    
                     var biliciy = Cesium.Cartesian3.distance(scene.pickPosition(tempy), scene.pickPosition(tempx1));
 
                     var bilicixx = Math.sqrt((scene.pickPosition(tempy).x - scene.pickPosition(tempx).x) * (scene.pickPosition(tempy).x - scene.pickPosition(tempx).x) + (scene.pickPosition(tempy).y - scene.pickPosition(tempx).y) * (scene.pickPosition(tempy).y - scene.pickPosition(tempx).y));
-                    var biliciyy = Math.sqrt((scene.pickPosition(tempy).x - scene.pickPosition(tempx1).x) * (scene.pickPosition(tempy).x - scene.pickPosition(tempx1).x) + (scene.pickPosition(tempy).y - scene.pickPosition(tempx1).y) * (scene.pickPosition(tempy).y - scene.pickPosition(tempx1).y));
-                    console.log(bilici);
-                    console.log(biliciy);
-                    console.log(bilicixx);
-                    console.log(biliciyy);
+                  
 
-                    var canshu1 = 1.3 / biliciy;
-                    var canshu2 = 1.8 / bilicixx;
-                    var tempa = new Cesium.Cartesian2(leftclik.position.x - canshu2, leftclik.position.y - canshu1);//a点，加了5.
-                    var tempb = new Cesium.Cartesian2(leftclik.position.x + canshu2, leftclik.position.y - canshu1);//b点，加了5.
-                    var tempc = new Cesium.Cartesian2(leftclik.position.x + canshu2, leftclik.position.y + canshu1);//c点，加了5.
-                    var tempd = new Cesium.Cartesian2(leftclik.position.x - canshu2, leftclik.position.y + canshu1);//d点，加了5.
-                   
-                    trem = [];
-                    if (scene.pickPosition(tempa) != undefined) {
-                        trem.push(scene.pickPosition(tempa));
-                    } else {
-                        layer.msg('请调整一下模型的位置1');
-                        return;
-                    }
-                    if (scene.pickPosition(tempb) != undefined) {
-                        trem.push(scene.pickPosition(tempb));
-                    } else {
-                        layer.msg('请调整一下模型的位置2');
-                        return;
-                    }
-                    if (scene.pickPosition(tempc) != undefined) {
-                        trem.push(scene.pickPosition(tempc));
-                    } else {
-                        layer.msg('请调整一下模型的位置3');
-                        return;
-                    }
-                    if (scene.pickPosition(tempd) != undefined) {
-                        trem.push(scene.pickPosition(tempd));
-                    } else {
-                        layer.msg('请调整一下模型的位置4');
-                        return;
-                    }
+                    var canshu1 = 1.5 / biliciy;
+                    var canshu2 = 2 / bilicixx;
+
+                    var fangxiang = new Cesium.Cartesian2(leftclik.position.x - 100, leftclik.position.y);
                     
                     //绘制多边形临时边线
-                    viewer.entities.add({
+                    //viewer.entities.add({
 
-                        name: "ptMeasue" + NewGuid(),
-                        polyline: {
-                            positions: trem,
-                            width: 1,
-                            arcType: Cesium.ArcType.RHUMB,
-                            material: Cesium.Color.YELLOW,
-                            depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
-                                color: Cesium.Color.YELLOW,
-                            }),
-                        }
-                    });
-                    var cartesian3a = new Cesium.Cartesian3(trem[0].x, trem[0].y, trem[0].z);
-                    var cartesian3b = new Cesium.Cartesian3(trem[3].x, trem[3].y, trem[3].z);
+                    //    name: "ptMeasue" + NewGuid(),
+                    //    polyline: {
+                    //        positions: trem,
+                    //        width: 1,
+                    //        arcType: Cesium.ArcType.RHUMB,
+                    //        material: Cesium.Color.YELLOW,
+                    //        depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                    //            color: Cesium.Color.YELLOW,
+                    //        }),
+                    //    }
+                    //});
+                    
                     var eyepostion = new Cesium.Cartesian3(viewer.camera.position.x, viewer.camera.position.y, viewer.camera.position.z);
 
-                    var tremlist = [];
-                    tremlist.push(eyepostion);
-                    tremlist.push(eyepostion);
-                    tremlist.push(eyepostion);
-                    tremlist.push(eyepostion);
+                    //var tremlist = [];
+                   // tremlist.push(eyepostion);
                     //视野点四下
 
-                    linepoints = trem;
-                    // 眼睛点
-                    eyespoints = tremlist;
-                    points = trem;
+                    //linepoints = trem;
+                    //// 眼睛点
+                    //eyespoints = eyepostion;
+                    //points = trem;
 
-                    var distancev = Cesium.Cartesian3.distance(cartesian3a, cartesian3b);
-                    if (distancev > 10) {
-                        layer.msg('选择的点形成的测区超过了模型范围，请重新选择！');
-                        return;
-                    }
+                    //var distancev = Cesium.Cartesian3.distance(cartesian3a, cartesian3b);
+                    //if (distancev > 10) {
+                    //    layer.msg('选择的点形成的测区超过了模型范围，请重新选择！');
+                    //    return;
+                    //}
                     //绘制多边形临时边线
-                    points.push(points[0]);
+                   // points.push(points[0]);
                     var jimiList = [];
+                    jimiList.push(scene.pickPosition(fangxiang));
                     for (var x = 0; x < 11; x++) {
                         for (var m = 0; m < 11; m++) {
 
@@ -293,18 +246,35 @@ function drowmeasurWindow() {
                             jimiList.push(scene.pickPosition(temp));
                         }
                     }
+
+                    ////绘制多边形临时边线
+                    //viewer.entities.add({
+
+                    //    name: "ptMeasue" + NewGuid(),
+                    //    polyline: {
+                    //        positions: jimiList,
+                    //        width: 0.5,
+                    //        arcType: Cesium.ArcType.RHUMB,
+                    //        material: Cesium.Color.YELLOW,
+                    //        depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                    //            color: Cesium.Color.YELLOW,
+                    //        }),
+                    //    }
+                    //});
+
                     var sendDate = {};
 
-                    console.log(jimiList);
-                    sendDate.bpsList = JSON.stringify(linepoints);
-                    sendDate.eyesList = JSON.stringify(eyespoints);
-                    sendDate.spsList = JSON.stringify(jimiList);
+          
+                    sendDate.target = JSON.stringify(position);
+                    sendDate.eye = JSON.stringify(eyepostion);
+                    sendDate.sps = JSON.stringify(jimiList);
+                    sendDate.w = 4;
+                    sendDate.h = 3;
                     sendDate.cookie = document.cookie;
-                    console.log(sendDate);
                     var loadingceindex = layer.load(0, { shade: 0.2, zIndex: layer.zIndex, success: function (loadlayero) { layer.setTop(loadlayero); } });
 
                     $.ajax({
-                        url: servicesurl + "/api/FlzWindowInfo/getWindowInfo", type: "post", data: sendDate,//后台发送请求
+                        url: servicesurl + "/api/FlzWindowInfo/getRockWindowInfo", type: "post", data: sendDate,//后台发送请求
                         success: function (result) {
 
 
@@ -316,10 +286,7 @@ function drowmeasurWindow() {
                                 layer.close(drowinfoAddlayerindex);
                                 layer.msg("调用接口计算失败，请重新选择位置，所选的点不能形成平面", { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
 
-                                modeljiazaiFlag = false;
-                                tree.reload('prjlayerlistid', { data: layers });
-                                ClearTemp();
-
+                               
                                 if (handler != undefined) {
                                     handler.destroy();
                                 }
@@ -331,89 +298,42 @@ function drowmeasurWindow() {
                             }
                             if (windowInfos == "") {
                                 layer.msg("调用接口结算失败，请稍后再试", { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
-                                //出来画图，显示测春哥
-
-
-                                var flzWindowLayer = new Object;
-
-                                var xSum = 0;//求一个平均点，用于定位
-                                var ySum = 0;
-                                var zSum = 0;
-                                for (var m = 0; m < positList.length; m++) {
-                                    xSum = xSum + parseFloat(positList[m].x);
-                                    ySum = ySum + parseFloat(positList[m].y);
-                                    zSum = zSum + parseFloat(positList[m].z);
-                                }
-                                flzWindowLayer.Centerx = xSum / positList.length;
-                                flzWindowLayer.Centery = ySum / positList.length;
-                                flzWindowLayer.Centerz = zSum / positList.length;
-
-                                flzWindowLayer.title = "测窗";
-                                flzWindowLayer.type = "FLZWINDOW";
-                                flzWindowLayer.id = "FLZWINDOW_" + "1";
-                                // flzWindowLayer.datas = data.field;
-                                flzWindowLayer.pointList = positList;
-                                flzWindowLayer.checked = true;
-                                flzWindowLayer.showCheckbox = true;//显示复选框
-                                flzWindowLayer.children = [];
-                                layers[0].children.push(flzWindowLayer);
-                                layers[0].spread = true;
-                                modeljiazaiFlag = false;
-                                tree.reload('prjlayerlistid', { data: layers });
-                                ClearTemp();
-
-                                if (handler != undefined) {
-                                    handler.destroy();
-                                }
-
-                                isRedo = true;
-                                points = [];
-                                linepoints = [];
-
-
-                                // viewer.Scene.sampleHeight();
-
                             } else {
                                 var BLHList = windowInfos.Vertices3D1;
+                                BLHList.push(BLHList[0]);
                                 var positList = [];
-                                var maxHeihts = 0;
+                            
                                 for (var i in BLHList) {
-                                    if (BLHList[i].L == "NaN") {
-                                        layer.msg("请旋转模型到合适位置", { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
-                                        return ;
-                                    }
-                                    var postions = new Cesium.Cartographic(Math.PI / 180 * BLHList[i].L, Math.PI / 180 * BLHList[i].B);
-
-                                    var Heights = viewer.scene.sampleHeight(postions);
-                                    if (Heights > maxHeihts) {
-                                        maxHeihts = Heights;
-                                    }
                                     //经纬度，现在的坐标，转换三维。
-                                    positList.push(new Cesium.Cartesian3.fromDegrees(BLHList[i].L, BLHList[i].B, Heights));
+                                    positList.push(new Cesium.Cartesian3.fromDegrees(BLHList[i].L, BLHList[i].B, BLHList[i].H));
+                                  
                                 }
-                                console.log(positList);
-                                console.log(windowInfos.Vertices3D);
-                                var dList3 = windowInfos.Vertices3D;
-                                var dList3temp = [];
-                                for (var j in dList3) {
-                                    dList3temp.push(new Cesium.Cartesian3(dList3[j].X, dList3[j].Y, dList3[j].Z));
-                                }
-                                console.log(dList3temp);
+                                
+                                temppoints.push(windowInfos);
+                                //console.log(positList);
+                                //console.log(windowInfos.Vertices3D);
+                                //var dList3 = windowInfos.Vertices3D;
+                                //var dList3temp = [];
+                                //for (var j in dList3) {
+                                //    dList3temp.push(new Cesium.Cartesian3(dList3[j].X, dList3[j].Y, dList3[j].Z));
+                                //}
+                                //console.log(dList3temp);
                                 //绘制多边形临时边线
-                                viewer.entities.add({
+                                //viewer.entities.add({
 
-                                    name: "ptMeasue" + NewGuid(),
-                                    polyline: {
-                                        positions: dList3temp,
-                                        width: 1,
-                                        arcType: Cesium.ArcType.RHUMB,
-                                        material: Cesium.Color.BLUE,
-                                        depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
-                                            color: Cesium.Color.BLUE,
-                                        }),
-                                    }
-                                });
+                                //    name: "ptMeasue" + NewGuid(),
+                                //    polyline: {
+                                //        positions: dList3temp,
+                                //        width: 1,
+                                //        arcType: Cesium.ArcType.RHUMB,
+                                //        material: Cesium.Color.BLUE,
+                                //        depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                //            color: Cesium.Color.BLUE,
+                                //        }),
+                                //    }
+                                //});
                                 //绘制多边形临时边线
+                               
                                 viewer.entities.add({
 
                                     name: "ptMeasue" + NewGuid(),
@@ -421,13 +341,18 @@ function drowmeasurWindow() {
                                         positions: positList,
                                         width: 1,
                                         arcType: Cesium.ArcType.RHUMB,
-                                        material: Cesium.Color.RED,
+                                        material: new Cesium.PolylineDashMaterialProperty({
+                                            color: Cesium.Color.YELLOW,
+                                        }),
                                         depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
-                                            color: Cesium.Color.RED,
+                                            color: Cesium.Color.YELLOW,
                                         }),
                                     }
                                 });
                        
+                                if (handler != undefined) {
+                                    handler.destroy();
+                                }
 
 
                                 //data.field.cookie = document.cookie;
@@ -476,6 +401,162 @@ function drowmeasurWindow() {
 
                     //}
                  
+                }
+            }
+        } else {
+            layer.msg('请点击模型');
+            return;
+        }
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+};
+//画探槽
+function drowprobeSlot() {
+    if (modleInfo == null) {
+        layer.msg('请先选择模型');
+        return;
+    }
+    if (handler != undefined) {
+        handler.destroy();
+    }
+    temppoints = [];
+    ClearTemp();
+    handler = new Cesium.ScreenSpaceEventHandler(canvas);
+    //左击
+    handler.setInputAction(function (leftclik) {
+
+        var pickedOject = scene.pick(leftclik.position);
+        if (pickedOject != undefined) {
+            var position = scene.pickPosition(leftclik.position);
+            if (position != undefined) {
+                if (Cesium.defined(position)) {
+
+                    temppoints.push(position);
+
+                    viewer.entities.add({
+                        name: "ptMeasue" + NewGuid(),
+                        position: position,
+                        point: {
+                            pixelSize: 1,
+                            color: Cesium.Color.YELLOW,
+                            disableDepthTestDistance: Number.POSITIVE_INFINITY
+                        }
+                    });
+
+                    //var sideLength = 1.8;
+                    var tempx = new Cesium.Cartesian2(leftclik.position.x + 1, leftclik.position.y);
+                    var tempx1 = new Cesium.Cartesian2(leftclik.position.x, leftclik.position.y + 1);
+                    var tempy = new Cesium.Cartesian2(leftclik.position.x, leftclik.position.y);
+
+
+                    var biliciy = Cesium.Cartesian3.distance(scene.pickPosition(tempy), scene.pickPosition(tempx1));
+
+                    var bilicixx = Math.sqrt((scene.pickPosition(tempy).x - scene.pickPosition(tempx).x) * (scene.pickPosition(tempy).x - scene.pickPosition(tempx).x) + (scene.pickPosition(tempy).y - scene.pickPosition(tempx).y) * (scene.pickPosition(tempy).y - scene.pickPosition(tempx).y));
+
+
+                    var canshu1 = 1.5 / biliciy;
+                    var canshu2 = 2 / bilicixx;
+
+
+
+                    var eyepostion = new Cesium.Cartesian3(viewer.camera.position.x, viewer.camera.position.y, viewer.camera.position.z);
+
+
+                    var jimiList = [];
+                    for (var x = 0; x < 11; x++) {
+                        for (var m = 0; m < 11; m++) {
+
+                            var temp = new Cesium.Cartesian2(leftclik.position.x - canshu2 + 0.2 * canshu2 * x, leftclik.position.y - canshu1 + 0.2 * canshu1 * m);//b点，加了5.
+
+                            jimiList.push(scene.pickPosition(temp));
+                        }
+                    }
+
+
+
+                    var sendDate = {};
+
+                    sendDate.target = JSON.stringify(position);
+                    sendDate.eye = JSON.stringify(eyepostion);
+                    sendDate.sps = JSON.stringify(jimiList);
+                    sendDate.w = 4;
+                    sendDate.h = 3;
+                    sendDate.cookie = document.cookie;
+                    console.log(sendDate);
+                    var loadingceindex = layer.load(0, { shade: 0.2, zIndex: layer.zIndex, success: function (loadlayero) { layer.setTop(loadlayero); } });
+                    return;
+                    $.ajax({
+                        url: servicesurl + "/api/FlzWindowInfo/getRockWindowInfo", type: "post", data: sendDate,//后台发送请求
+                        success: function (result) {
+
+
+                            layer.close(loadingceindex);
+                            //关闭
+                            var windowInfos = JSON.parse(result);
+                            console.log(windowInfos);
+                            if (windowInfos == null) {
+                                layer.close(drowinfoAddlayerindex);
+                                layer.msg("调用接口计算失败，请重新选择位置，所选的点不能形成平面", { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+
+                                modeljiazaiFlag = false;
+                                tree.reload('prjlayerlistid', { data: layers });
+                                ClearTemp();
+
+                                if (handler != undefined) {
+                                    handler.destroy();
+                                }
+
+                                isRedo = true;
+                                points = [];
+                                linepoints = [];
+                                return false;
+                            }
+                            if (windowInfos == "") {
+                                layer.msg("调用接口结算失败，请稍后再试", { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+                            } else {
+                                var BLHList = windowInfos.Vertices3D1;
+                                var positList = [];
+                                var maxHeihts = 0;
+
+                                
+                                for (var i in BLHList) {
+                                    if (BLHList[i].L == "NaN") {
+                                        layer.msg("请旋转模型到合适位置", { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+                                        return;
+                                    }
+                                    var postions = new Cesium.Cartographic(Math.PI / 180 * BLHList[i].L, Math.PI / 180 * BLHList[i].B);
+
+                                    var Heights = viewer.scene.sampleHeight(postions);
+                                    if (Heights > maxHeihts) {
+                                        maxHeihts = Heights;
+                                    }
+                                    //经纬度，现在的坐标，转换三维。
+                                    positList.push(new Cesium.Cartesian3.fromDegrees(BLHList[i].L, BLHList[i].B, Heights));
+
+                                }
+                                positList.push(positList[0]);
+                                temppoints = positList;
+
+                                //绘制多边形临时边线
+                                viewer.entities.add({
+
+                                    name: "ptMeasue" + NewGuid(),
+                                    polyline: {
+                                        positions: positList,
+                                        width: 1,
+                                        arcType: Cesium.ArcType.RHUMB,
+                                        material: Cesium.Color.RED,
+                                        depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                            color: Cesium.Color.RED,
+                                        }),
+                                    }
+                                });
+                            }
+
+                        }, datatype: "json"
+                    });
+
+
                 }
             }
         } else {

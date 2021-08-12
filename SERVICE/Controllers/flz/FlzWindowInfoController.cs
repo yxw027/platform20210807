@@ -351,6 +351,63 @@ namespace SERVICE.Controllers
                 return "验证用户失败！";
             }
         }
+        /// <summary>
+        /// 自定义测区2
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public string getRockWindowInfo()
+        {
+            #region 参数
+            string target = HttpContext.Current.Request.Form["target"];//边界list
+            string eye = HttpContext.Current.Request.Form["eye"];//视界list
+            string sps = HttpContext.Current.Request.Form["sps"];//加密点list
+            string w = HttpContext.Current.Request.Form["w"];//加密点list
+            string h = HttpContext.Current.Request.Form["h"];//加密点list
 
+            #endregion
+
+            #region 解析验证用户
+            User user = null;
+            COM.CookieHelper.CookieResult cookieResult = ManageHelper.ValidateCookie(pgsqlConnection, HttpContext.Current.Request.Form["cookie"], ref user);
+            #endregion
+
+            if (cookieResult == COM.CookieHelper.CookieResult.SuccessCookkie)
+            {
+                if (user == null)
+                {
+                    return "用户为空！";
+                }
+                //Object list1 = JsonHelper.ToObject<string>(x);
+
+               // xyz target = JsonHelper.ToObject<xyz>(target);
+               
+                List<xyz> spslist = JsonHelper.ToObject<List<xyz>>(sps);
+
+                PointXYZ x= JsonHelper.ToObject<PointXYZ>(target);
+
+                PointXYZ y= JsonHelper.ToObject<PointXYZ>(eye);
+
+                List<PointXYZ> bps_XYZ = new List<PointXYZ>();
+           
+                List<PointXYZ> sps_XYZ = new List<PointXYZ>();
+                for (int i = 0; i < spslist.Count; i++)
+                {
+                    sps_XYZ.Add(new PointXYZ(spslist[i].x, spslist[i].y, spslist[i].z));
+                }
+
+
+
+                COM.GeologyWindow gw = COM.Fit.FitFixPlane(x, y, sps_XYZ,4.0,3.0);
+
+
+                return JsonHelper.ToJson(gw);
+            }
+            else
+            {
+                return "验证用户失败！";
+            }
+        }
+        
     }
 }
