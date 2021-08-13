@@ -432,8 +432,11 @@ function LoadLayerListLayer(id) {
                                         ////探槽
                                         if (designList[i].probeSlotPostion != "") {
                                             var pointListtem = JSON.parse(designList[i].probeSlotPostion);
+                                            var profileinfo = JSON.parse(designList[i].profilePostion);
                                             var profilelayer = new Object;
+                                            // 把剖面数据翻进去
                                             profilelayer.data = pointListtem;
+                                            profilelayer.profileinfo = profileinfo;
                                             profilelayer.title = pointListtem.name;
                                             profilelayer.type = "PROBESLOT";
                                             profilelayer.checked = false;
@@ -898,7 +901,28 @@ function LoadLayerListLayer(id) {
                                                                     var entity = viewer.entities.getById(data.children[i].id);
                                                                     var pointsList = data.children[i].data.position;
                                                                     if (pointsList[0].H > 0) {//修改后，重新存
+                                                                        if (entity == undefined) {
 
+                                                                            var pointList = [];
+                                                                            for (var m in pointsList) {
+                                                                                pointList.push(new Cesium.Cartesian3.fromDegrees(pointsList[m].L, pointsList[m].B, pointsList[m].H));
+                                                                            }
+
+                                                                            viewer.entities.add({
+                                                                                id: data.children[i].id,
+                                                                                polyline: {
+                                                                                    positions: pointList,
+                                                                                    width: 1,
+                                                                                    material: Cesium.Color.fromCssColorString('#09f4f7'),
+                                                                                    show: true,
+                                                                                    clampToGround: true,
+                                                                                    classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                                }
+                                                                            });
+
+                                                                        }
+
+                                                                        data.children[i].checked = true;
                                                                     } else {//未修改前贴膜线
                                                                         if (entity == undefined) {
 
@@ -936,31 +960,31 @@ function LoadLayerListLayer(id) {
                                                                                 id: data.children[i].id,
                                                                                 position: new Cesium.Cartesian3.fromDegrees(data.children[i].data.position.L, data.children[i].data.position.B, data.children[i].data.position.H),
                                                                                 billboard: {
-                                                                                    image: '../../Resources/img/map/marker.png',
+                                                                                    image: '../../Resources/img/map/drillhole.png',
                                                                                     verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-                                                                                    width: 24,
-                                                                                    height: 24,
+                                                                                    width: 32,
+                                                                                    height: 32,
                                                                                     disableDepthTestDistance: Number.POSITIVE_INFINITY,
 
                                                                                 }
                                                                             });
-                                                                            var entitylabel = viewer.entities.getById(data.children[i].id + "_LABEL");
-                                                                            if (entitylabel == undefined) {
-                                                                                viewer.entities.add({
-                                                                                    id: data.children[i].id + "_LABEL",
-                                                                                    position: data.children[i].data.position,
-                                                                                    label: {
-                                                                                        text: data.children[i].title,
-                                                                                        font: '16px Times New Roman',
-                                                                                        showBackground: true,
-                                                                                        backgroundColor: new Cesium.Color(0.165, 0.165, 0.165, 0.5),
-                                                                                        horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-                                                                                        verticalOrigin: Cesium.VerticalOrigin.CENTER,
-                                                                                        pixelOffset: new Cesium.Cartesian2(0.0, -60),
-                                                                                        disableDepthTestDistance: Number.POSITIVE_INFINITY
-                                                                                    }
-                                                                                });
-                                                                            }
+                                                                            //var entitylabel = viewer.entities.getById(data.children[i].id + "_LABEL");
+                                                                            //if (entitylabel == undefined) {
+                                                                            //    viewer.entities.add({
+                                                                            //        id: data.children[i].id + "_LABEL",
+                                                                            //        position: data.children[i].data.position,
+                                                                            //        label: {
+                                                                            //            text: data.children[i].title,
+                                                                            //            font: '16px Times New Roman',
+                                                                            //            showBackground: true,
+                                                                            //            backgroundColor: new Cesium.Color(0.165, 0.165, 0.165, 0.5),
+                                                                            //            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                                            //            verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                                            //            pixelOffset: new Cesium.Cartesian2(0.0, -60),
+                                                                            //            disableDepthTestDistance: Number.POSITIVE_INFINITY
+                                                                            //        }
+                                                                            //    });
+                                                                            //}
                                                                         } else {
                                                                             var postions = new Cesium.Cartographic(Math.PI / 180 * data.children[i].data.position.L, Math.PI / 180 * data.children[i].data.position.B);
                                                                             var Heights = viewer.scene.sampleHeight(postions);
@@ -1108,7 +1132,27 @@ function LoadLayerListLayer(id) {
                                                                         var entity = viewer.entities.getById(data.children[i].children[j].id);
                                                                         var pointsList = data.children[i].children[j].data.position;
                                                                         if (pointsList[0].H > 0) {//修改后，重新存
+                                                                            if (entity == undefined) {
+                                                                                    var pointList = [];
+                                                                                    for (var m in pointsList) {
+                                                                                        pointList.push(new Cesium.Cartesian3.fromDegrees(pointsList[m].L, pointsList[m].B, pointsList[m].H));
+                                                                                    }
 
+                                                                                    viewer.entities.add({
+                                                                                        id: data.children[i].children[j].id,
+                                                                                        polyline: {
+                                                                                            positions: pointList,
+                                                                                            width: 1,
+                                                                                            material: Cesium.Color.fromCssColorString('#09f4f7'),
+                                                                                            show: true,
+                                                                                            clampToGround: true,
+                                                                                            classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                                        }
+                                                                                    });
+
+                                                                                }
+
+                                                                                data.children[i].children[j].checked = true;
                                                                         } else {//未修改前贴膜线
                                                                             if (entity == undefined) {
 
@@ -1146,31 +1190,31 @@ function LoadLayerListLayer(id) {
                                                                                     id: data.children[i].children[j].id,
                                                                                     position: new Cesium.Cartesian3.fromDegrees(data.children[i].children[j].data.position.L, data.children[i].children[j].data.position.B, data.children[i].children[j].data.position.H),
                                                                                     billboard: {
-                                                                                        image: '../../Resources/img/map/marker.png',
+                                                                                        image: '../../Resources/img/map/drillhole.png',
                                                                                         verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-                                                                                        width: 24,
-                                                                                        height: 24,
+                                                                                        width: 32,
+                                                                                        height: 32,
                                                                                         disableDepthTestDistance: Number.POSITIVE_INFINITY,
 
                                                                                     }
                                                                                 });
-                                                                                var entitylabel = viewer.entities.getById(data.children[i].children[j].id + "_LABEL");
-                                                                                if (entitylabel == undefined) {
-                                                                                    viewer.entities.add({
-                                                                                        id: data.children[i].children[j].id + "_LABEL",
-                                                                                        position: data.children[i].children[j].data.position,
-                                                                                        label: {
-                                                                                            text: data.children[i].children[j].title,
-                                                                                            font: '16px Times New Roman',
-                                                                                            showBackground: true,
-                                                                                            backgroundColor: new Cesium.Color(0.165, 0.165, 0.165, 0.5),
-                                                                                            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-                                                                                            verticalOrigin: Cesium.VerticalOrigin.CENTER,
-                                                                                            pixelOffset: new Cesium.Cartesian2(0.0, -60),
-                                                                                            disableDepthTestDistance: Number.POSITIVE_INFINITY
-                                                                                        }
-                                                                                    });
-                                                                                }
+                                                                                //var entitylabel = viewer.entities.getById(data.children[i].children[j].id + "_LABEL");
+                                                                                //if (entitylabel == undefined) {
+                                                                                //    viewer.entities.add({
+                                                                                //        id: data.children[i].children[j].id + "_LABEL",
+                                                                                //        position: data.children[i].children[j].data.position,
+                                                                                //        label: {
+                                                                                //            text: data.children[i].children[j].title,
+                                                                                //            font: '16px Times New Roman',
+                                                                                //            showBackground: true,
+                                                                                //            backgroundColor: new Cesium.Color(0.165, 0.165, 0.165, 0.5),
+                                                                                //            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                                                //            verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                                                //            pixelOffset: new Cesium.Cartesian2(0.0, -60),
+                                                                                //            disableDepthTestDistance: Number.POSITIVE_INFINITY
+                                                                                //        }
+                                                                                //    });
+                                                                                //}
                                                                             } else {
                                                                                 var postions = new Cesium.Cartographic(Math.PI / 180 * data.children[i].children[j].data.position.L, Math.PI / 180 * data.children[i].children[j].data.position.B);
                                                                                 var Heights = viewer.scene.sampleHeight(postions);
@@ -1784,7 +1828,31 @@ function LoadLayerListLayer(id) {
                                                         var entity = viewer.entities.getById(data.id);
                                                         var pointsList = data.data.position;
                                                         if (pointsList[0].H > 0) {//修改后，重新存
+                                                            if (entity == undefined) {
 
+                                                                var pointList = [];
+                                                                for (var m in pointsList) {
+                                                                    pointList.push(new Cesium.Cartesian3.fromDegrees(pointsList[m].L, pointsList[m].B, pointsList[m].H));
+                                                                }
+
+                                                                viewer.entities.add({
+                                                                    id: data.id,
+                                                                    polyline: {
+                                                                        positions: pointList,
+                                                                        width: 1,
+                                                                        material: Cesium.Color.fromCssColorString('#09f4f7'),
+                                                                        show: true,
+                                                                        clampToGround: true,
+                                                                        classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                    }
+                                                                });
+
+                                                               
+
+
+                                                            }
+
+                                                            data.checked = true;
                                                         } else {//未修改前贴膜线
                                                             if (entity == undefined) {
 
@@ -1853,31 +1921,31 @@ function LoadLayerListLayer(id) {
                                                                     id: data.id,
                                                                     position: new Cesium.Cartesian3.fromDegrees(data.data.position.L, data.data.position.B, data.data.position.H),
                                                                     billboard: {
-                                                                        image: '../../Resources/img/map/marker.png',
+                                                                        image: '../../Resources/img/map/drillhole.png',
                                                                         verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-                                                                        width: 24,
-                                                                        height: 24,
+                                                                        width: 32,
+                                                                        height: 32,
                                                                         disableDepthTestDistance: Number.POSITIVE_INFINITY,
 
                                                                     }
                                                                 });
-                                                                var entitylabel = viewer.entities.getById(data.id + "_LABEL");
-                                                                if (entitylabel == undefined) {
-                                                                    viewer.entities.add({
-                                                                        id: data.id + "_LABEL",
-                                                                        position: data.data.position,
-                                                                        label: {
-                                                                            text: data.title,
-                                                                            font: '16px Times New Roman',
-                                                                            showBackground: true,
-                                                                            backgroundColor: new Cesium.Color(0.165, 0.165, 0.165, 0.5),
-                                                                            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-                                                                            verticalOrigin: Cesium.VerticalOrigin.CENTER,
-                                                                            pixelOffset: new Cesium.Cartesian2(0.0, -60),
-                                                                            disableDepthTestDistance: Number.POSITIVE_INFINITY
-                                                                        }
-                                                                    });
-                                                                }
+                                                                //var entitylabel = viewer.entities.getById(data.id + "_LABEL");
+                                                                //if (entitylabel == undefined) {
+                                                                //    viewer.entities.add({
+                                                                //        id: data.id + "_LABEL",
+                                                                //        position: data.data.position,
+                                                                //        label: {
+                                                                //            text: data.title,
+                                                                //            font: '16px Times New Roman',
+                                                                //            showBackground: true,
+                                                                //            backgroundColor: new Cesium.Color(0.165, 0.165, 0.165, 0.5),
+                                                                //            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                                //            verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                                //            pixelOffset: new Cesium.Cartesian2(0.0, -60),
+                                                                //            disableDepthTestDistance: Number.POSITIVE_INFINITY
+                                                                //        }
+                                                                //    });
+                                                                //}
                                                             } else {
                                                                 var postions = new Cesium.Cartographic(Math.PI / 180 * data.data.position.L, Math.PI / 180 * data.data.position.B);
                                                                 var Heights = viewer.scene.sampleHeight(postions);

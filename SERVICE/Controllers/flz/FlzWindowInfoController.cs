@@ -391,6 +391,11 @@ namespace SERVICE.Controllers
                 List<PointXYZ> bps_XYZ = new List<PointXYZ>();
            
                 List<PointXYZ> sps_XYZ = new List<PointXYZ>();
+
+                
+                double m = Double.Parse(w);
+                double n = Double.Parse(h);
+
                 for (int i = 0; i < spslist.Count; i++)
                 {
                     sps_XYZ.Add(new PointXYZ(spslist[i].x, spslist[i].y, spslist[i].z));
@@ -398,7 +403,7 @@ namespace SERVICE.Controllers
 
 
 
-                COM.GeologyWindow gw = COM.Fit.FitFixPlane(x, y, sps_XYZ,4.0,3.0);
+                COM.GeologyWindow gw = COM.Fit.FitFixPlane(x, y, sps_XYZ, m, n);
 
 
                 return JsonHelper.ToJson(gw);

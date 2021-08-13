@@ -1,5 +1,5 @@
 ﻿
-
+var profileInfo = '';
 //查看点信息
 var drwInfox = null;
 function DrwInfo(data,flag) {
@@ -274,8 +274,11 @@ function DrwInfo(data,flag) {
                                     var sendDate = {};
                                     sendDate.remark = temp.field.remark;
                                     var tempdata = data.data.data;
-                                    tempdata.code = temp.field.code;
-                                    tempdata.name = temp.field.name;
+                                    tempdata.code = temp.field.code.replace(/'/, '');
+                                    tempdata.name = temp.field.name.replace(/'/, '"');
+
+                                    //用replace函数将字符串中的“; ”替换成“, ”, 代码为“a.replace(/;/, ',') ”, 然后将后的字符串重新赋值给原变量:
+
                                     tempdata.startPoint = { "B": y, "L": x, "H": 160 };
                                     tempdata.endPoint = { "B": y1, "L": x1, "H": 110 };
                                     sendDate.profilePostion = JSON.stringify(tempdata);
@@ -296,13 +299,16 @@ function DrwInfo(data,flag) {
                                                             for (var z in layers[i].children[j].children) {
                                                                 if (layers[i].children[j].children[z].id==data.data.id) {
                                                                     layers[i].children[j].children[z].remark = temp.field.remark;
-                                                                    layers[i].children[j].children[z].data.startPoint = { "B": y, "L": x, "H": 160 };
-                                                                    layers[i].children[j].children[z].data.endPoint = { "B": y1, "L": x1, "H": 110 };
-                                                                    layers[i].children[j].children[z].data.code = temp.field.code;
-                                                                    layers[i].children[j].children[z].data.name = temp.field.name;
+                                                                    layers[i].children[j].children[z].data = tempdata;
                                                                     layers[i].spread = true;
                                                                     layers[i].children[j].spread = true;
                                                                     layers[i].children[j].children[z].spread = true;
+                                                                    layers[i].children[j].children[z].checked = true;
+                                                                    for (var m in layers[i].children[j].children ) {
+                                                                        if (layers[i].children[j].children[m].type=="PROBESLOT") {
+                                                                            layers[i].children[j].children[m].profileinfo = tempdata;//把新数据数据放入
+                                                                        }
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -426,6 +432,8 @@ function DrwInfo(data,flag) {
                                                                     layers[i].spread = true;
                                                                     layers[i].children[j].spread = true;
                                                                     layers[i].children[j].children[z].spread = true;
+                                                                    layers[i].children[j].children[z].checked = true;
+
                                                                 }
                                                             }
                                                         }
@@ -470,6 +478,8 @@ function DrwInfo(data,flag) {
             });
 
         } else if (data.data.type == "MENSURE") {//测窗修改
+
+
             var temptitle = data.data.title;
             drwInfox = layer.open({
                 type: 1
@@ -629,6 +639,8 @@ function DrwInfo(data,flag) {
 
         } else if (data.data.type == "PROBESLOT") {//探槽修改
             var temptitle = data.data.title;
+            
+            profileInfo = data.data.profileinfo;
             drwInfox = layer.open({
                 type: 1
                 , title: ['探槽修改', 'font-weight:bold;font-size:large;font-family:	Microsoft YaHei']
@@ -676,27 +688,20 @@ function DrwInfo(data,flag) {
 
                                     var sendDate = {};
 
-                                    var pointList = [];
-                                    for (var i in temppoints) {
-                                        var cartesian3 = Cesium.Cartographic.fromCartesian(temppoints[i]);                        //笛卡尔XYZ
-                                        var longitude = Cesium.Math.toDegrees(cartesian3.longitude);                         //经度
-                                        var latitude = Cesium.Math.toDegrees(cartesian3.latitude);                           //纬度
-                                        var height = cartesian3.height;                                                      //高度
-
-                                        pointList.push({ "B": latitude, "L": longitude, "H": height });
-
-                                    }
+                                    
+                                    var windouinfo = temppoints[0];
+                                    var pointList = windouinfo.Vertices3D1;
 
                                     var tempdata = data.data.data;
                                     tempdata.position = pointList;
                                     tempdata.code = temp.field.code;
                                     tempdata.name = temp.field.name;
+                                    tempdata.wingdowinfo = windouinfo;
 
                                     sendDate.probeSlotPostion = JSON.stringify(tempdata);
                                     sendDate.remark = temp.field.remark;
-                                    sendDate.id = data.data.lineId;
+                                    sendDate.id = data.data.pointId;
                                     sendDate.cookie = document.cookie;
-                                    return;
                                     var loadingceindex = layer.load(0, {
                                         shade: 0.2,
                                         zIndex: layer.zIndex,
@@ -713,8 +718,9 @@ function DrwInfo(data,flag) {
                                                     if (layers[i].type == "DESIGN") {
                                                         for (var j in layers[i].children) {
                                                             for (var z in layers[i].children[j].children) {
-                                                                if (layers[i].children[j].children[z].id == data.id) {
-                                                                    layers[i].children[j].children[z].data.position = pointsList;
+                                                                if (layers[i].children[j].children[z].id == data.data.id) {
+                                                                    layers[i].children[j].children[z].data = tempdata;
+                                                                    layers[i].children[j].children[z].remark = temp.field.remark; 
                                                                     layers[i].spread = true;
                                                                     layers[i].children[j].spread = true;
                                                                     layers[i].children[j].children[z].spread = true;
@@ -724,8 +730,8 @@ function DrwInfo(data,flag) {
                                                         }
                                                     }
                                                 }
-                                                viewer.entities.removeById(data.id);
-                                                viewer.entities.removeById(data.id + "_LABEL");
+                                                viewer.entities.removeById(data.data.id);
+                                                viewer.entities.removeById(data.data.id + "_LABEL");
                                                 modeljiazaiFlag = false;
                                                 tree.reload('prjlayerlistid', { data: layers });
 

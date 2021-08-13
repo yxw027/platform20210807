@@ -210,7 +210,8 @@ namespace SERVICE.Controllers
             string id = HttpContext.Current.Request.Form["id"];
             string drillHolePostion = HttpContext.Current.Request.Form["drillHolePostion"];
             string measurWindowPostion = HttpContext.Current.Request.Form["measurWindowPostion"];
-            
+            string probeSlotPostion = HttpContext.Current.Request.Form["probeSlotPostion"];
+
             #endregion
 
             #region 解析验证用户
@@ -254,9 +255,23 @@ namespace SERVICE.Controllers
                 }
                 else if (!string.IsNullOrEmpty(measurWindowPostion))//测窗
                 {
-                    string sql = " UPDATE rock_design_data set measur_window_position={0} WHERE id={1}";
+                    string sql = " UPDATE rock_design_data set remark={0}, measur_window_position={1} WHERE id={2}";
                     int updatecount = PostgresqlHelper.UpdateData(pgsqlConnection, string.Format(sql
-                            ,SQLHelper.UpdateString(measurWindowPostion), id));
+                             , SQLHelper.UpdateString(remark), SQLHelper.UpdateString(measurWindowPostion), id));
+                    if (updatecount == 1)
+                    {
+                        return "更新成功";
+                    }
+                    else
+                    {
+                        return "更新失败";
+                    }
+                }
+                else if (!string.IsNullOrEmpty(probeSlotPostion))
+                {
+                    string sql = " UPDATE rock_design_data set remark={0},probe_slot_position={1} WHERE id={2}";
+                    int updatecount = PostgresqlHelper.UpdateData(pgsqlConnection, string.Format(sql
+                            , SQLHelper.UpdateString(remark), SQLHelper.UpdateString(probeSlotPostion), id));
                     if (updatecount == 1)
                     {
                         return "更新成功";
