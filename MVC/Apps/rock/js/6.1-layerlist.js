@@ -469,6 +469,12 @@ function LoadLayerListLayer(id) {
                                     console.log(layers);
                                     console.log(2222);
                                 }
+
+                                var rockLiChengDataLayer = new Object;
+                                rockLiChengDataLayer.title = "长江里程";
+                                rockLiChengDataLayer.type = "LICHENG";
+                                rockLiChengDataLayer.showCheckbox = true;//显示复选框
+                                layers.push(rockLiChengDataLayer);
                                 if (projectindex != null) {
                                     tree.render({
                                         elem: '#prjlayerlist'
@@ -1847,7 +1853,7 @@ function LoadLayerListLayer(id) {
                                                                     }
                                                                 });
 
-                                                               
+
 
 
                                                             }
@@ -1860,7 +1866,7 @@ function LoadLayerListLayer(id) {
                                                                 for (var m in pointsList) {
                                                                     pointList.push(new Cesium.Cartesian3.fromDegrees(pointsList[m].L, pointsList[m].B, pointsList[m].H));
                                                                 }
-                                                               
+
                                                                 viewer.entities.add({
                                                                     id: data.id,
                                                                     polyline: {
@@ -1909,14 +1915,14 @@ function LoadLayerListLayer(id) {
                                                             data.checked = true;
                                                         }
 
-                                                        
-                                                        
+
+
                                                     } else if (data.type == "DRILLHOLE") {//钻孔
                                                         console.log(data);
                                                         var entity = viewer.entities.getById(data.id);
                                                         if (entity == undefined) {
                                                             //当无此元素添加 (new Cesium.Cartesian3.fromDegrees(pointsList[i].L, pointsList[i].B, pointsList.H)
-                                                            if (data.data.position.H>0) {
+                                                            if (data.data.position.H > 0) {
                                                                 viewer.entities.add({
                                                                     id: data.id,
                                                                     position: new Cesium.Cartesian3.fromDegrees(data.data.position.L, data.data.position.B, data.data.position.H),
@@ -1963,12 +1969,51 @@ function LoadLayerListLayer(id) {
                                                                     }
                                                                 });
                                                             }
-                                                            
+
                                                         }
 
-                                                        
+
 
                                                         data.checked = true;
+                                                    } else if (data.type == "LICHENG") {//历程
+
+                                                        viewer.entities.add({
+                                                            id: "liCheng9999",
+                                                            polyline: {
+                                                                positions: Cesium.Cartesian3.fromDegreesArray(lcLinglist),
+                                                                width: 2,
+                                                                arcType: Cesium.ArcType.RHUMB,
+                                                                material: Cesium.Color.GREEN,
+                                                            },
+                                                        });
+
+                                                        for (var i in lcLableList) {
+                                                            var L = lcLableList[i].geometry.x;
+                                                            var B = lcLableList[i].geometry.y;
+                                                            var text = lcLableList[i].attributes.Text;
+                                                            viewer.entities.add({
+                                                                id:"lilable"+i,
+                                                                position: Cesium.Cartesian3.fromDegrees(L, B),
+                                                                label: {
+                                                                    text: text + "",
+                                                                    font: "18px Helvetica",
+                                                                    fillColor: Cesium.Color.RED,
+                                                                    outlineColor: Cesium.Color.BLACK,
+                                                                    outlineWidth: 2,
+                                                                    style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                                                                },
+                                                            });
+                                                            viewer.entities.add({
+                                                                id:"lcPoint"+i,
+                                                                position: Cesium.Cartesian3.fromDegrees(L, B),
+                                                                point: {
+                                                                    pixelSize: 5,
+                                                                    color: Cesium.Color.YELLOW,
+                                                                },
+                                                            });
+
+                                                        }
+
                                                     }
                                                 }
 
@@ -1994,7 +2039,7 @@ function LoadLayerListLayer(id) {
                                                         }
                                                     }
                                                     data.checked = false;
-                                                }
+                                                } 
                                                 else {
                                                     if (data.type == "PROJECTSUMODEL" || data.type == "DISASTERSURMODEL") {
                                                         console.log(modleInfo);
@@ -2002,6 +2047,13 @@ function LoadLayerListLayer(id) {
                                                             viewer.scene.primitives.remove(curtileset);
                                                             curtileset = null;
                                                             modleInfo = null;
+                                                        }
+
+                                                    } else if (data.type == "LICHENG") {//历程
+                                                        viewer.entities.removeById("liCheng9999");
+                                                        for (var i in lcLableList) {
+                                                            viewer.entities.removeById("lilable" + i);
+                                                            viewer.entities.removeById("lcPoint" + i);
                                                         }
 
                                                     }
