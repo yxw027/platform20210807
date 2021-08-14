@@ -295,7 +295,7 @@ namespace SERVICE.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpDelete]
-        public string DeleteRockPoint()
+        public string DeleteRockkDesignPoint()
         {
             string id = HttpContext.Current.Request.Form["id"];
 
@@ -305,7 +305,7 @@ namespace SERVICE.Controllers
             if (cookieResult == COM.CookieHelper.CookieResult.SuccessCookkie)
             {
                 
-                int updatecount = PostgresqlHelper.UpdateData(pgsqlConnection, string.Format("DELETE FROM  rock_data_point  WHERE id={0}", id));
+                int updatecount = PostgresqlHelper.UpdateData(pgsqlConnection, string.Format("DELETE FROM  rock_design_data  WHERE id={0}", id));
                 if (updatecount == 1)
                 {
                     return "删除成功";

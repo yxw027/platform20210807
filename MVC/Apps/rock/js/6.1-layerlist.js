@@ -385,6 +385,7 @@ function LoadLayerListLayer(id) {
                                         var rockSectionDataLayer = new Object;
                                         rockSectionDataLayer.title = "剖面-" + designList[i].name;
                                         rockSectionDataLayer.type = "SECTION";
+                                        rockSectionDataLayer.id = designList[i].id;
                                         rockSectionDataLayer.showCheckbox = true;//显示复选框
                                        var x = JSON.parse(designList[i].profilePostion);
                                      //var y =  JSON.parse(designList[i].measurWindowPostion);
@@ -2151,6 +2152,53 @@ function LoadLayerListLayer(id) {
                                                                 console.log(layers);
                                                                 viewer.entities.removeById(data.id);
                                                                 tree.reload('prjlayerlistid', { data: layers });
+                                                            } else {
+                                                                layer.msg(result, { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+                                                            }
+                                                        }, datatype: "json"
+                                                    });
+                                                } else if (data.type == "SECTION" || data.type == "PROFILE" || data.type == "MENSURE" || data.type == "PROBESLOT" || data.type == "DRILLHOLE" ) {//删除设计数据
+                                                    var temp = {};
+                                                    if (data.type == "SECTION") {
+                                                        temp.id = data.id;
+                                                    } else if (data.type == "PROFILE" || data.type == "MENSURE") {
+                                                        temp.id = data.lineId;
+                                                    } else if (data.type == "PROBESLOT" || data.type == "DRILLHOLE") {
+                                                        temp.id = data.pointId;
+                                                    }
+                                                    temp.cookie = document.cookie;
+                                                    var loadinglayerindex = layer.load(0, { shade: false, zIndex: layer.zIndex, success: function (loadlayero) { layer.setTop(loadlayero); } });
+
+                                                    $.ajax({
+                                                        url: servicesurl + "/api/RockDesign/DeleteRockkDesignPoint", type: "delete", data: temp,
+                                                        success: function (result) {
+                                                            layer.close(loadinglayerindex);
+                                                            if (result == "删除成功") {
+                                                                layer.msg("删除成功", { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
+                                                                //关闭
+                                                                //刷新项目列表
+                                                                var tempList = [];
+                                                                for (var i in layers) {
+                                                                    if (layers[i].type == "DESIGN") {
+                                                                        for (var j in layers[i].children) {
+                                                                            if (layers[i].children[j].id == temp.id) {
+                                                                                for (var m in layers[i].children[j].children) {
+                                                                                    viewer.entities.removeById(layers[i].children[j].children[m].id);
+                                                                                    console.log(1233);
+                                                                                }
+                                                                                layers[i].children.splice(j, 1);
+                                                                                layers[i].spread = true;
+                                                                                break;
+                                                                            }
+                                                                           
+                                                                        }
+                                                                    }
+                                                                }
+                                                                console.log(layers);
+
+                                                                modeljiazaiFlag = false;
+                                                                tree.reload('prjlayerlistid', { data: layers });
+                                                                ClearTemp();
                                                             } else {
                                                                 layer.msg(result, { zIndex: layer.zIndex, success: function (layero) { layer.setTop(layero); } });
                                                             }
