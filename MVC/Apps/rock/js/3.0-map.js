@@ -10,7 +10,7 @@ var baseMaps = new Array(
             var imageryProviders = [];
             //天地图矢量
             imageryProviders.push(new Cesium.WebMapTileServiceImageryProvider({
-                url: "http://t0.tianditu.gov.cn/vec_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=vec&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=d73ccdbf1b6587002c8f746867919bde",
+                url: "http://t0.tianditu.gov.cn/vec_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=vec&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=138994fd58a355f0f5d7b6d5bfe4d840",
                 layer: "tdtVecBasicLayer",
                 style: "default",
                 format: "image/jpeg",
@@ -18,13 +18,12 @@ var baseMaps = new Array(
             }));
             //天地图矢量中文标注
             imageryProviders.push(new Cesium.WebMapTileServiceImageryProvider({
-                url: "http://t0.tianditu.gov.cn/cva_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=cva&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default.jpg&tk=d73ccdbf1b6587002c8f746867919bde",
+                url: "http://t0.tianditu.gov.cn/cva_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=cva&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default.jpg&tk=138994fd58a355f0f5d7b6d5bfe4d840",
                 layer: "tdtAnnoLayer",
                 style: "default",
                 format: "image/jpeg",
                 tileMatrixSetID: "GoogleMapsCompatible"
             }));
-
             return imageryProviders;
         }
     }),
@@ -36,7 +35,7 @@ var baseMaps = new Array(
             var imageryProviders = [];
             //天地图影像
             imageryProviders.push(new Cesium.WebMapTileServiceImageryProvider({
-                url: "http://t0.tianditu.gov.cn/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=d73ccdbf1b6587002c8f746867919bde",
+                url: "http://t0.tianditu.gov.cn/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=138994fd58a355f0f5d7b6d5bfe4d840",
                 layer: "tdtBasicLayer",
                 style: "default",
                 format: "image/jpeg",
@@ -45,19 +44,89 @@ var baseMaps = new Array(
             }));
             //天地图影像中文标注
             imageryProviders.push(new Cesium.WebMapTileServiceImageryProvider({
-                url: "http://t0.tianditu.gov.cn/cia_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=cia&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default.jpg&tk=d73ccdbf1b6587002c8f746867919bde",
+                url: "http://t0.tianditu.gov.cn/cia_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=cia&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default.jpg&tk=138994fd58a355f0f5d7b6d5bfe4d840",
                 layer: "tdtAnnoLayer",
                 style: "default",
                 format: "image/jpeg",
                 tileMatrixSetID: "GoogleMapsCompatible",
                 maximumLevel: 16,
             }));
+            return imageryProviders;
+        }
+    }),
+    new Cesium.ProviderViewModel({
+        name: '天地图影像（重庆）',
+        iconUrl: Cesium.buildModuleUrl('../../Resources/img/cesium/cqImage.png'),
+        creationFunction: function () {
+            var imageryProviders = [];
+            //天地图影像（底图）
+            imageryProviders.push(new Cesium.WebMapTileServiceImageryProvider({
+                url: "http://t0.tianditu.gov.cn/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=138994fd58a355f0f5d7b6d5bfe4d840",
+                layer: "tdtBasicLayer",
+                style: "default",
+                format: "image/jpeg",
+                tileMatrixSetID: "GoogleMapsCompatible",
+                maximumLevel: 16,
+            }));
+
+            //重庆天地图
+            imageryProviders.push(new Cesium.WebMapTileServiceImageryProvider({
+                url: "http://www.digitalcq.com/tianditu/kxrgo/d4028ca7ce8e4853b868d205426993a4/WMTS/tile/1.0.0/TDT_CQMap_IMG/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}",
+                layer: "TDT_CQMap_IMG",
+                style: "default",
+                tileMatrixSetID: "default028mm",
+                format: "image/jpgpng",
+                tilingScheme: new Cesium.GeographicTilingScheme(),
+                maximumLevel: 17,
+                tileMatrixLabels: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17"],
+            }));
+
+            ////重庆天地图注记
+            //imageryProviders.push(new Cesium.WebMapTileServiceImageryProvider({
+            //    url: "http://www.digitalcq.com/tianditu/ewfwz/a31647270b994833b1d291c44790de69/WMTS/tile/1.0.0/TDT_CQMap_IMG_LABEL/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}",
+            //    layer: "TDT_CQMap_IMG_LABEL",
+            //    style: "default",
+            //    tileMatrixSetID: "default028mm",
+            //    format: "image/jpgpng",
+            //    tilingScheme: new Cesium.GeographicTilingScheme(),
+            //    maximumLevel: 17,
+            //    tileMatrixLabels: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17"],
+            //}));
+
+            //天地图影像中文标注
+            imageryProviders.push(new Cesium.WebMapTileServiceImageryProvider({
+                url: "http://t0.tianditu.gov.cn/cia_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=cia&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default.jpg&tk=138994fd58a355f0f5d7b6d5bfe4d840",
+                layer: "tdtAnnoLayer",
+                style: "default",
+                format: "image/jpeg",
+                tileMatrixSetID: "GoogleMapsCompatible",
+                //maximumLevel: 16,
+            }));
 
             return imageryProviders;
         }
     }),
-
-
+    new Cesium.ProviderViewModel({
+        name: 'Google影像',
+        iconUrl: Cesium.buildModuleUrl('../../Resources/img/cesium/google_earth_pro.ico'),
+        creationFunction: function () {
+            var imageryProviders = [];
+            //Google影像
+            imageryProviders.push(new Cesium.UrlTemplateImageryProvider({
+                url: "http://mt1.google.cn/vt/lyrs=s&hl=zh-CN&x={x}&y={y}&z={z}&s=Gali"
+            }));
+            //天地图影像中文标注
+            imageryProviders.push(new Cesium.WebMapTileServiceImageryProvider({
+                url: "http://t0.tianditu.gov.cn/cia_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=cia&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default.jpg&tk=138994fd58a355f0f5d7b6d5bfe4d840",
+                layer: "tdtAnnoLayer",
+                style: "default",
+                format: "image/jpeg",
+                tileMatrixSetID: "GoogleMapsCompatible",
+                //maximumLevel: 16,
+            }));
+            return imageryProviders;
+        }
+    }),
     new Cesium.ProviderViewModel({
         name: 'Bing影像',
         iconUrl: Cesium.buildModuleUrl('Widgets/Images/ImageryProviders/bingAerialLabels.png'),
@@ -69,7 +138,6 @@ var baseMaps = new Array(
             });
         }
     }),
-
     new Cesium.ProviderViewModel({
         name: 'Mapbox卫星',
         iconUrl: Cesium.buildModuleUrl('Widgets/Images/ImageryProviders/mapboxSatellite.png'),
@@ -79,8 +147,6 @@ var baseMaps = new Array(
             });
         }
     }),
-
-
     new Cesium.ProviderViewModel({
         name: 'ESRI影像',
         iconUrl: Cesium.buildModuleUrl('Widgets/Images/ImageryProviders/esriWorldImagery.png'),
@@ -90,10 +156,80 @@ var baseMaps = new Array(
                 enablePickFeatures: false
             });
         }
-    })
-
-
-
+    }),
+    //new Cesium.ProviderViewModel({
+    //    name: 'ESRI街道',
+    //    iconUrl: Cesium.buildModuleUrl('Widgets/Images/ImageryProviders/esriWorldStreetMap.png'),
+    //    creationFunction: function () {
+    //        return new Cesium.ArcGisMapServerImageryProvider({
+    //            url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer',
+    //            enablePickFeatures: false
+    //        });
+    //    }
+    //}),
+    //new Cesium.ProviderViewModel({
+    //    name: 'ESRI National Geographic',
+    //    iconUrl: Cesium.buildModuleUrl('Widgets/Images/ImageryProviders/esriNationalGeographic.png'),
+    //    creationFunction: function () {
+    //        return new Cesium.ArcGisMapServerImageryProvider({
+    //            url: 'https://services.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/',
+    //            enablePickFeatures: false
+    //        });
+    //    }
+    //}),
+    //new Cesium.ProviderViewModel({
+    //    name: 'OSM',
+    //    iconUrl: Cesium.buildModuleUrl('Widgets/Images/ImageryProviders/openStreetMap.png'),
+    //    creationFunction: function () {
+    //        return Cesium.createOpenStreetMapImageryProvider({
+    //            url: 'https://a.tile.openstreetmap.org/'
+    //        });
+    //    }
+    //}),
+    //new Cesium.ProviderViewModel({
+    //    name: 'Stamen Watercolor',
+    //    iconUrl: Cesium.buildModuleUrl('Widgets/Images/ImageryProviders/stamenWatercolor.png'),
+    //    creationFunction: function () {
+    //        return Cesium.createOpenStreetMapImageryProvider({
+    //            url: 'https://stamen-tiles.a.ssl.fastly.net/watercolor/',
+    //            credit: 'Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under CC BY SA.'
+    //        });
+    //    }
+    //}),
+    //new Cesium.ProviderViewModel({
+    //    name: 'Stamen Toner',
+    //    iconUrl: Cesium.buildModuleUrl('Widgets/Images/ImageryProviders/stamenToner.png'),
+    //    creationFunction: function () {
+    //        return Cesium.createOpenStreetMapImageryProvider({
+    //            url: 'https://stamen-tiles.a.ssl.fastly.net/toner/',
+    //            credit: 'Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under CC BY SA.'
+    //        });
+    //    }
+    //}),
+    //new Cesium.ProviderViewModel({
+    //    name: 'BlackMarble',
+    //    iconUrl: Cesium.buildModuleUrl('Widgets/Images/ImageryProviders/earthAtNight.png'),
+    //    creationFunction: function () {
+    //        return Cesium.createTileMapServiceImageryProvider({
+    //            url: 'https://cesiumjs.org/blackmarble',
+    //            flipXY: true,
+    //            credit: 'Black Marble imagery courtesy NASA Earth Observatory'
+    //        });
+    //    }
+    //}),
+    //new Cesium.ProviderViewModel({
+    //    name: 'Google',
+    //    iconUrl: Cesium.buildModuleUrl('Widgets/Images/ImageryProviders/naturalEarthII.png'),
+    //    creationFunction: function () {
+    //        return new Cesium.UrlTemplateImageryProvider({
+    //            url: 'http://www.google.cn/maps/vt?lyrs=s@800&x={x}&y={y}&z={z}',
+    //            tilingScheme: new Cesium.WebMercatorTilingScheme(),
+    //            minimumLevel: 1,
+    //            maximumLevel: 20,
+    //            credit: 'http://www.bjxbsj.cn',
+    //        });
+    //    }
+    //})
 );
 
 /*
@@ -128,7 +264,7 @@ viewer = new Cesium.Viewer("map", {
     navigationHelpButton: false,
     navigationInstructionsInitiallyVisible: false,
     imageryProviderViewModels: baseMaps,
-    selectedImageryProviderViewModel: baseMaps[1],
+    selectedImageryProviderViewModel: baseMaps[2],
     terrainProviderViewModels: baseTerrains,
     selectedTerrainProviderViewModel: baseTerrains[1],
     orientation: {

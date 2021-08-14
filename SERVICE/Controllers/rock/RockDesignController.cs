@@ -398,7 +398,7 @@ namespace SERVICE.Controllers
             COM.CookieHelper.CookieResult cookieResult = ManageHelper.ValidateCookie(pgsqlConnection, cookie, ref userbsms);
           
                 #region
-                string sql = "SELECT * FROM rock_design_data WHERE project_id={0} ";
+                string sql = "SELECT * FROM rock_design_data WHERE project_id={0} ORDER BY name ASC";
                
                 //if (!string.IsNullOrEmpty(modleId))
                 //{

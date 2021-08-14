@@ -1982,9 +1982,9 @@ function LoadLayerListLayer(id) {
                                                             id: "liCheng9999",
                                                             polyline: {
                                                                 positions: Cesium.Cartesian3.fromDegreesArray(lcLinglist),
-                                                                width: 2,
+                                                                width: 3,
                                                                 arcType: Cesium.ArcType.RHUMB,
-                                                                material: Cesium.Color.GREEN,
+                                                                material: Cesium.Color.AQUA,
                                                             },
                                                         });
 
@@ -1997,18 +1997,22 @@ function LoadLayerListLayer(id) {
                                                                 position: Cesium.Cartesian3.fromDegrees(L, B),
                                                                 label: {
                                                                     text: text + "",
-                                                                    font: "18px Helvetica",
-                                                                    fillColor: Cesium.Color.RED,
-                                                                    outlineColor: Cesium.Color.BLACK,
-                                                                    outlineWidth: 2,
-                                                                    style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                                                                    font: "20px Times New Roman",
+                                                                    //fillColor: Cesium.Color.RED,
+                                                                    //outlineColor: Cesium.Color.BLACK,
+                                                                    //outlineWidth: 2,
+                                                                    //style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                                                                    horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                                                                    heightReference: Cesium.HeightReference.NONE,
+                                                                    verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                                                                    pixelOffset: new Cesium.Cartesian2(0.0, -20),
                                                                 },
                                                             });
                                                             viewer.entities.add({
                                                                 id:"lcPoint"+i,
                                                                 position: Cesium.Cartesian3.fromDegrees(L, B),
                                                                 point: {
-                                                                    pixelSize: 5,
+                                                                    pixelSize: 8,
                                                                     color: Cesium.Color.YELLOW,
                                                                 },
                                                             });
