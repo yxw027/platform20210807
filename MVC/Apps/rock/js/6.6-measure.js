@@ -135,7 +135,7 @@ function pointMeasure2() {
                                 name: "ptlMeasue" + NewGuidCL(),
                                 position: Cesium.Cartesian3.fromDegrees(longitude, latitude, height),
                                 label: {
-                                    text: '经纬度(' + longitude.toFixed(2) + ',' + latitude.toFixed(2) + ',' + (height + 31.80).toFixed(2) + ')',
+                                    text: '经纬度(' + longitude.toFixed(6) + ',' + latitude.toFixed(6) + ',' + (height + 31.80).toFixed(2) + ')',
                                     showBackground: true,
                                     backgroundColor: new Cesium.Color(0.165, 0.165, 0.165, 0.5),
                                     font: '16px Times New Roman',

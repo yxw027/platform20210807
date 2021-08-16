@@ -860,12 +860,10 @@ function LoadLayerListLayer(id) {
                                                                                     positions: pointList,
                                                                                     width: 1,
                                                                                     material: Cesium.Color.RED,
-                                                                                    //depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
-                                                                                    //    color: Cesium.Color.fromCssColorString('#09f654')
-                                                                                    //}),
-                                                                                    show: true,
-                                                                                    clampToGround: true,
-                                                                                    classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                                    depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                                        color: Cesium.Color.RED
+                                                                                    }),
+                                                                                    
                                                                                 }
                                                                             });
 
@@ -921,9 +919,9 @@ function LoadLayerListLayer(id) {
                                                                                     positions: pointList,
                                                                                     width: 1,
                                                                                     material: Cesium.Color.fromCssColorString('#09f4f7'),
-                                                                                    show: true,
-                                                                                    clampToGround: true,
-                                                                                    classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                                    depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                                        color: Cesium.Color.fromCssColorString('#09f4f7')
+                                                                                    }),
                                                                                 }
                                                                             });
 
@@ -1091,12 +1089,10 @@ function LoadLayerListLayer(id) {
                                                                                         positions: pointList,
                                                                                         width: 1,
                                                                                         material: Cesium.Color.RED,
-                                                                                        //depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
-                                                                                        //    color: Cesium.Color.fromCssColorString('#09f654')
-                                                                                        //}),
-                                                                                        show: true,
-                                                                                        clampToGround: true,
-                                                                                        classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                                        depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                                            color: Cesium.Color.RED
+                                                                                        }),
+                                                                                        
                                                                                     }
                                                                                 });
 
@@ -1151,9 +1147,9 @@ function LoadLayerListLayer(id) {
                                                                                             positions: pointList,
                                                                                             width: 1,
                                                                                             material: Cesium.Color.fromCssColorString('#09f4f7'),
-                                                                                            show: true,
-                                                                                            clampToGround: true,
-                                                                                            classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                                            depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                                                color: Cesium.Color.fromCssColorString('#09f4f7')
+                                                                                            }),
                                                                                         }
                                                                                     });
 
@@ -1691,12 +1687,12 @@ function LoadLayerListLayer(id) {
                                                                         positions: pointList,
                                                                         width: 1,
                                                                         material: Cesium.Color.RED,
-                                                                        //depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
-                                                                        //    color: Cesium.Color.fromCssColorString('#09f654')
-                                                                        //}),
-                                                                        show: true,
-                                                                        clampToGround: true,
-                                                                        classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                        depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                            color: Cesium.Color.RED
+                                                                        }),
+                                                                        //show: true,
+                                                                        //clampToGround: true,
+                                                                        //classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
                                                                     }
                                                                 });
 
@@ -1848,9 +1844,9 @@ function LoadLayerListLayer(id) {
                                                                         positions: pointList,
                                                                         width: 1,
                                                                         material: Cesium.Color.fromCssColorString('#09f4f7'),
-                                                                        show: true,
-                                                                        clampToGround: true,
-                                                                        classificationType: Cesium.ClassificationType.CESIUM_3D_TILE
+                                                                        depthFailMaterial: new Cesium.PolylineDashMaterialProperty({
+                                                                            color: Cesium.Color.fromCssColorString('#09f4f7')
+                                                                        }),
                                                                     }
                                                                 });
 
